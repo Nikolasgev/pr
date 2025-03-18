@@ -136,9 +136,9 @@ class _OrderPageState extends State<OrderPage> {
                                     context
                                         .read<OrderBloc>()
                                         .add(PlaceOrderEvent(order: order));
+                                    Navigator.pushNamedAndRemoveUntil(
+                                        context, '/', (route) => false);
                                   }
-                                  Navigator.pushNamedAndRemoveUntil(
-                                      context, '/', (route) => false);
                                 },
                                 child: Text('Submit Order'),
                               ),

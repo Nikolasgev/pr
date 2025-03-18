@@ -17,22 +17,34 @@ class CartRepositoryImpl {
   Future<void> addProduct(Product product) async {
     final index =
         _cart.items.indexWhere((item) => item.product.id == product.id);
+    List<CartItem> updatedItems = List.from(_cart.items);
     if (index == -1) {
-      _cart.items.add(CartItem(product: product, quantity: 1));
+      updatedItems.add(CartItem(product: product, quantity: 1));
     } else {
-      _cart.items[index].quantity++;
+      final currentItem = updatedItems[index];
+      updatedItems[index] = CartItem(
+          product: currentItem.product, quantity: currentItem.quantity + 1);
     }
+    _cart = Cart(items: updatedItems);
   }
 
   Future<void> removeProduct(Product product) async {
-    _cart.items.removeWhere((item) => item.product.id == product.id);
+    List<CartItem> updatedItems =
+        _cart.items.where((item) => item.product.id != product.id).toList();
+    _cart = Cart(items: updatedItems);
   }
 
   Future<void> updateProduct(Product product, int quantity) async {
+    List<CartItem> updatedItems = List.from(_cart.items);
     final index =
-        _cart.items.indexWhere((item) => item.product.id == product.id);
+        updatedItems.indexWhere((item) => item.product.id == product.id);
     if (index != -1) {
-      _cart.items[index].quantity = quantity;
+      if (quantity <= 0) {
+        updatedItems.removeAt(index);
+      } else {
+        updatedItems[index] = CartItem(product: product, quantity: quantity);
+      }
+      _cart = Cart(items: updatedItems);
     }
   }
 }
