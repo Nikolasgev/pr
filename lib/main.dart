@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-// import 'core/firebase/firebase_config.dart';
+import 'core/firebase/firebase_config.dart';
 import 'core/router/app_router.dart';
 import 'injection_container.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await FirebaseConfig.initializeFirebase();
+  await FirebaseConfig.initializeFirebase();
   setupInjection();
   runApp(MyApp());
 }
