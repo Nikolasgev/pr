@@ -9,9 +9,9 @@ part 'cart_event.dart';
 part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
-  final CartRepositoryImpl repository = CartRepositoryImpl();
+  final CartRepositoryImpl repository;
 
-  CartBloc() : super(CartInitial()) {
+  CartBloc({required this.repository}) : super(CartInitial()) {
     on<LoadCart>((event, emit) async {
       emit(CartLoading());
       try {
