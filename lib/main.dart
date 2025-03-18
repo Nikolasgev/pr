@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Clean Architecture App',
+      title: 'Periche Telegram Shop',
       debugShowCheckedModeBanner: false,
       onGenerateRoute: _appRouter.onGenerateRoute,
       initialRoute: '/',

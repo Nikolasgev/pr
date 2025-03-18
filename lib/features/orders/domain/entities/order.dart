@@ -1,4 +1,4 @@
-import '../../../catalog/domain/entities/product.dart';
+import '../../../cart/domain/entities/cart_item.dart';
 
 class Order {
   final String id;
@@ -7,7 +7,7 @@ class Order {
   final String phone;
   final String email;
   final String comments;
-  final List<Product> products;
+  final List<CartItem> items; // изменили с List<Product> на List<CartItem>
   final String status;
 
   Order({
@@ -17,7 +17,7 @@ class Order {
     required this.phone,
     required this.email,
     required this.comments,
-    required this.products,
+    required this.items,
     required this.status,
   });
 }

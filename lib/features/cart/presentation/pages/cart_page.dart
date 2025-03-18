@@ -36,6 +36,27 @@ class CartPage extends StatelessWidget {
               }
               return Container();
             }(),
+            bottomNavigationBar: (state is CartLoaded)
+                ? Container(
+                    padding: EdgeInsets.all(16),
+                    color: Colors.grey[200],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Total:',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '\$${state.cart.totalPrice.toStringAsFixed(2)}',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  )
+                : null,
             // Если корзина не пуста, отображаем кнопку для перехода к оформлению заказа
             floatingActionButton:
                 (state is CartLoaded && state.cart.items.isNotEmpty)

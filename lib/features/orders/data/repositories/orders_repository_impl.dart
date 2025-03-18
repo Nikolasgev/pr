@@ -15,14 +15,15 @@ class OrdersRepositoryImpl {
         'email': order.email,
         'comments': order.comments,
         'status': order.status,
-        'products': order.products
-            .map((product) => {
-                  'id': product.id,
-                  'name': product.name,
-                  'description': product.description,
-                  'price': product.price,
-                  'imageUrl': product.imageUrl,
-                  'category': product.category,
+        'items': order.items
+            .map((item) => {
+                  'id': item.product.id,
+                  'name': item.product.name,
+                  'description': item.product.description,
+                  'price': item.product.price,
+                  'quantity': item.quantity,
+                  'imageUrl': item.product.imageUrl,
+                  'category': item.product.category,
                 })
             .toList(),
         'createdAt': FieldValue.serverTimestamp(), // Временная метка создания
