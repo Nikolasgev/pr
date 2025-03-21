@@ -7,15 +7,16 @@ class FirebaseService {
   // Получение списка товаров из Firestore
   Future<List<Map<String, dynamic>>> getProducts() async {
     try {
-      QuerySnapshot snapshot = await _firestore
-          .collection(AppConstants.firebaseCollectionProducts)
-          .get();
+      QuerySnapshot itemsSnapshot =
+          await _firestore.collectionGroup('items').get();
 
-      return snapshot.docs.map((doc) {
+      List<Map<String, dynamic>> products = itemsSnapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         data['id'] = doc.id; // Добавляем идентификатор документа
         return data;
       }).toList();
+
+      return products;
     } catch (error) {
       throw Exception("Ошибка получения товаров: $error");
     }

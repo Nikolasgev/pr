@@ -36,7 +36,7 @@ class ProductCard extends StatelessWidget {
               // Верхняя часть с изображением
               Container(
                 decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 230, 230, 230),
+                    color: const Color.fromARGB(255, 255, 255, 255),
                     borderRadius: BorderRadius.all(Radius.circular(8))),
                 height: cardHeight * imageFraction,
                 width: double.infinity,
