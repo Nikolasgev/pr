@@ -1,8 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:per_shop/features/cart/presentation/blocs/cart_bloc.dart';
+import 'package:per_shop/features/catalog/domain/entities/product.dart';
 import 'package:per_shop/injection_container.dart';
 
-import '../../domain/entities/product.dart';
+/// Диалог выбора объёма товара
+Future<String?> showVolumeSelectorDialog(
+    BuildContext context, List<String> volumes,
+    {String? initialValue}) {
+  String? tempSelected = initialValue ?? volumes.first;
+  return showDialog<String>(
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text("Выберите объем"),
+            content: DropdownButton<String>(
+              value: tempSelected,
+              items: volumes
+                  .map((volume) => DropdownMenuItem<String>(
+                        value: volume,
+                        child: Text(volume),
+                      ))
+                  .toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  tempSelected = newValue;
+                });
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Отмена"),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, tempSelected),
+                child: const Text("Выбрать"),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -12,7 +54,7 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       final double cardHeight = constraints.maxHeight;
-      // Задаём пропорции: 63% под изображение, 37% под контент
+      // Пропорции: 63% под изображение, 37% под контент
       const double imageFraction = 0.68;
       const double contentFraction = 0.32;
 
@@ -33,11 +75,11 @@ class ProductCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Верхняя часть с изображением
+              // Изображение товара
               Container(
                 decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 255, 255, 255),
-                    borderRadius: BorderRadius.all(Radius.circular(8))),
+                    borderRadius: const BorderRadius.all(Radius.circular(8))),
                 height: cardHeight * imageFraction,
                 width: double.infinity,
                 child: Image.network(
@@ -45,7 +87,7 @@ class ProductCard extends StatelessWidget {
                   fit: BoxFit.contain,
                 ),
               ),
-              // Нижняя часть с контентом
+              // Информация о товаре
               Container(
                 height: cardHeight * contentFraction,
                 padding: const EdgeInsets.all(8.0),
@@ -58,7 +100,6 @@ class ProductCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Название товара
                         Text(
                           product.name,
                           style: const TextStyle(
@@ -69,7 +110,6 @@ class ProductCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
-                        // Описание товара
                         Text(
                           product.description,
                           style: const TextStyle(
@@ -80,10 +120,8 @@ class ProductCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 8),
-                        // Строка с ценой и кнопкой
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.max,
                           children: [
                             Text(
                               '\$${product.price}',
@@ -94,15 +132,41 @@ class ProductCard extends StatelessWidget {
                             ),
                             IconButton(
                               icon: const Icon(Icons.add_shopping_cart),
-                              onPressed: () {
-                                sl<CartBloc>()
-                                    .add(AddProductToCart(product: product));
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        '${product.name} добавлен в корзину'),
-                                  ),
-                                );
+                              onPressed: () async {
+                                // Проверяем, заполнено ли поле объема.
+                                if (product.volume != null &&
+                                    product.volume!.isNotEmpty) {
+                                  print('volume is NOT EMPTY');
+                                  // Показываем диалог выбора объема.
+                                  final selectedVolume =
+                                      await showVolumeSelectorDialog(
+                                    context,
+                                    product.volume!,
+                                    initialValue: product.volume!.first,
+                                  );
+                                  if (selectedVolume != null) {
+                                    sl<CartBloc>().add(AddProductToCart(
+                                      product: product,
+                                      selectedVolume: selectedVolume,
+                                    ));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            '${product.name} ($selectedVolume) добавлен в корзину'),
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  print('volume is EMPTY');
+                                  sl<CartBloc>()
+                                      .add(AddProductToCart(product: product));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          '${product.name} добавлен в корзину'),
+                                    ),
+                                  );
+                                }
                               },
                             ),
                           ],
