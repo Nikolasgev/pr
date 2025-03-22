@@ -61,6 +61,7 @@ class OrdersRepositoryImpl {
               category: item['category'],
             ),
             quantity: item['quantity'],
+            selectedVolume: item['selectedVolume'],
           );
         }).toList();
         return Order(

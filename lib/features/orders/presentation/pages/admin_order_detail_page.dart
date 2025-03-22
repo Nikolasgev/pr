@@ -74,6 +74,7 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold)),
               // Отображение списка товаров из заказа
+              // Фрагмент из AdminOrderDetailPage, где отображается список товаров заказа:
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -90,13 +91,22 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
                         fit: BoxFit.cover,
                       ),
                       title: Text(item.product.name),
-                      subtitle: Text('Кол-во: ${item.quantity}'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Кол-во: ${item.quantity}'),
+                          if (item.selectedVolume != null)
+                            Text('Объем: ${item.selectedVolume}'),
+                        ],
+                      ),
                       trailing: Text(
-                          '\$${(item.product.price * item.quantity).toStringAsFixed(2)}'),
+                        '\$${(item.product.price * item.quantity).toStringAsFixed(2)}',
+                      ),
                     ),
                   );
                 },
               ),
+
               const SizedBox(height: 16),
               // Если статус "Completed" (Завершен), показываем кнопку удаления
               if (selectedStatus == 'Completed')

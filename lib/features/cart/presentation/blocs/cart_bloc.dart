@@ -23,19 +23,22 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     });
 
     on<AddProductToCart>((event, emit) async {
-      await repository.addProduct(event.product);
+      await repository.addProduct(event.product,
+          selectedVolume: event.selectedVolume);
       final cart = await repository.getCart();
       emit(CartLoaded(cart: cart));
     });
 
     on<RemoveProductFromCart>((event, emit) async {
-      await repository.removeProduct(event.product);
+      await repository.removeProduct(event.product,
+          selectedVolume: event.selectedVolume);
       final cart = await repository.getCart();
       emit(CartLoaded(cart: cart));
     });
 
     on<UpdateProductInCart>((event, emit) async {
-      await repository.updateProduct(event.product, event.quantity);
+      await repository.updateProduct(event.product, event.quantity,
+          selectedVolume: event.selectedVolume);
       final cart = await repository.getCart();
       emit(CartLoaded(cart: cart));
     });
