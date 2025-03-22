@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:per_shop/features/catalog/domain/entities/product.dart';
 import 'package:per_shop/features/catalog/presentation/pages/product_detail_page.dart';
+import 'package:per_shop/features/orders/domain/entities/order.dart';
+import 'package:per_shop/features/orders/presentation/pages/order_success_page.dart';
 
 import '../../features/cart/presentation/pages/cart_page.dart';
 import '../../features/catalog/presentation/pages/catalog_page.dart';
@@ -17,6 +19,12 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CartPage());
       case '/order':
         return MaterialPageRoute(builder: (_) => OrderPage());
+      case '/orderSuccessPage':
+        final order = settings.arguments as Order;
+        return MaterialPageRoute(
+            builder: (_) => OrderSuccessPage(
+                  order: order,
+                ));
       case '/admin':
         return MaterialPageRoute(builder: (_) => AdminOrdersPage());
       case '/product':

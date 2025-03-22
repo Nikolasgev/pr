@@ -22,6 +22,10 @@ class _CatalogPageState extends State<CatalogPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Catalog'),
+          leading: IconButton(
+            icon: Icon(Icons.admin_panel_settings),
+            onPressed: () => Navigator.pushNamed(context, '/admin'),
+          ),
           actions: [
             IconButton(
               icon: Icon(Icons.shopping_cart),

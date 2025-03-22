@@ -15,7 +15,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       emit(OrderPlacing());
       try {
         await placeOrder(event.order);
-        emit(OrderPlaced());
+        emit(OrderPlaced(order: event.order));
       } catch (e) {
         emit(OrderError(message: e.toString()));
       }
