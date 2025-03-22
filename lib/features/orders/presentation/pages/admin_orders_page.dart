@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:per_shop/features/orders/data/repositories/orders_repository_impl.dart';
 import 'package:per_shop/features/orders/presentation/blocs/admin_orders_bloc.dart';
-import 'package:per_shop/features/orders/presentation/pages/admin_order_detail_page.dart';
 import 'package:per_shop/injection_container.dart';
 
 class AdminOrdersPage extends StatelessWidget {
@@ -33,10 +32,13 @@ class AdminOrdersPage extends StatelessWidget {
                     title: Text("Заказ ${order.id} - ${order.clientName}"),
                     subtitle: Text("Статус: ${order.status}"),
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                            builder: (_) => AdminOrderDetailPage(order: order)),
+                        '/admin/orderDetail',
+                        arguments: {
+                          'order': order,
+                          'adminBloc': context.read<AdminOrdersBloc>(),
+                        },
                       );
                     },
                   );
