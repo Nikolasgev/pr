@@ -27,6 +27,7 @@ class OrdersRepositoryImpl {
             'quantity': item.quantity,
             'imageUrl': item.product.imageUrl,
             'category': item.product.category,
+            'selectedVolume': item.selectedVolume,
           };
         }).toList(),
         'createdAt': FieldValue.serverTimestamp(),

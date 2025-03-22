@@ -13,12 +13,14 @@ class CartItemWidget extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: Image.network(cartItem.product.imageUrl),
-        title: Text(cartItem.product.name),
+        title: Text(cartItem.product.name +
+            (cartItem.selectedVolume != null
+                ? " (${cartItem.selectedVolume})"
+                : "")),
         subtitle: Text('Price: \$${cartItem.product.price.toStringAsFixed(2)}'),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Кнопка "минус"
             IconButton(
               icon: Icon(Icons.remove),
               onPressed: () {
@@ -27,19 +29,19 @@ class CartItemWidget extends StatelessWidget {
                         UpdateProductInCart(
                           product: cartItem.product,
                           quantity: cartItem.quantity - 1,
+                          selectedVolume: cartItem.selectedVolume,
                         ),
                       );
                 } else {
-                  // Если количество равно 1, удаляем товар из корзины
                   context.read<CartBloc>().add(
-                        RemoveProductFromCart(product: cartItem.product),
+                        RemoveProductFromCart(
+                            product: cartItem.product,
+                            selectedVolume: cartItem.selectedVolume),
                       );
                 }
               },
             ),
-            // Отображаем текущее количество
             Text('${cartItem.quantity}'),
-            // Кнопка "плюс"
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
@@ -47,6 +49,7 @@ class CartItemWidget extends StatelessWidget {
                       UpdateProductInCart(
                         product: cartItem.product,
                         quantity: cartItem.quantity + 1,
+                        selectedVolume: cartItem.selectedVolume,
                       ),
                     );
               },

@@ -5,7 +5,7 @@ class AddToCart {
   final CartRepositoryImpl repository;
   AddToCart(this.repository);
 
-  Future<void> call(Product product) async {
-    await repository.addProduct(product);
+  Future<void> call(Product product, {String? selectedVolume}) async {
+    await repository.addProduct(product, selectedVolume: selectedVolume);
   }
 }
