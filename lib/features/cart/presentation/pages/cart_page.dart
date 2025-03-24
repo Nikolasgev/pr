@@ -16,14 +16,14 @@ class CartPage extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('Cart'),
+              title: Text('Корзина'),
             ),
             body: () {
               if (state is CartLoading) {
                 return Center(child: CircularProgressIndicator());
               } else if (state is CartLoaded) {
                 if (state.cart.items.isEmpty) {
-                  return Center(child: Text('Cart is empty'));
+                  return Center(child: Text('Корзина пуста'));
                 }
                 return ListView.builder(
                   itemCount: state.cart.items.length,
@@ -44,12 +44,12 @@ class CartPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Total:',
+                          'Сумма:',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '\$${state.cart.totalPrice.toStringAsFixed(2)}',
+                          '${state.cart.totalPrice.toStringAsFixed(2)}₽',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),

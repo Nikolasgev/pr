@@ -14,7 +14,7 @@ class AdminOrdersPage extends StatelessWidget {
         ..add(LoadOrdersEvent()),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Admin Orders'),
+          title: const Text('Заказы'),
         ),
         body: BlocBuilder<AdminOrdersBloc, AdminOrdersState>(
           builder: (context, state) {

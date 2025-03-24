@@ -56,7 +56,7 @@ class _OrderPageState extends State<OrderPage> {
           builder: (context) {
             return Scaffold(
               appBar: AppBar(
-                title: Text('Place Order'),
+                title: Text('Заказ'),
               ),
               body: FutureBuilder<Cart>(
                 future: _fetchCart(),
@@ -72,7 +72,7 @@ class _OrderPageState extends State<OrderPage> {
                         children: [
                           // Список товаров из корзины
                           Text(
-                            'Order Summary',
+                            'Сумма заказа',
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           ListView.builder(
@@ -84,18 +84,18 @@ class _OrderPageState extends State<OrderPage> {
                               return ListTile(
                                 title: Text(item.product.name),
                                 subtitle: Text(
-                                    'Price: \$${item.product.price.toStringAsFixed(2)}  x  ${item.quantity}'),
+                                    'Цена: ${item.product.price.toStringAsFixed(2)}₽  x  ${item.quantity}'),
                                 trailing: Text(
-                                    '\$${(item.product.price * item.quantity).toStringAsFixed(2)}'),
+                                    '${(item.product.price * item.quantity).toStringAsFixed(2)}₽'),
                               );
                             },
                           ),
                           Divider(),
                           // Итоговая сумма
                           ListTile(
-                            title: Text('Total'),
+                            title: Text('Сумма'),
                             trailing: Text(
-                              '\$${cart.totalPrice.toStringAsFixed(2)}',
+                              '${cart.totalPrice.toStringAsFixed(2)}₽',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -107,25 +107,24 @@ class _OrderPageState extends State<OrderPage> {
                               children: [
                                 TextFormField(
                                   controller: _clientNameController,
-                                  decoration:
-                                      InputDecoration(labelText: 'Client Name'),
+                                  decoration: InputDecoration(labelText: 'ФИО'),
                                   validator: (value) => value!.isEmpty
-                                      ? 'Enter client name'
+                                      ? 'Введите своё ФИО'
                                       : null,
                                 ),
                                 TextFormField(
                                   controller: _addressController,
                                   decoration:
-                                      InputDecoration(labelText: 'Address'),
+                                      InputDecoration(labelText: 'Адрес'),
                                   validator: (value) =>
-                                      value!.isEmpty ? 'Enter address' : null,
+                                      value!.isEmpty ? 'Введите адрес' : null,
                                 ),
                                 TextFormField(
                                   controller: _phoneController,
-                                  decoration:
-                                      InputDecoration(labelText: 'Phone'),
+                                  decoration: InputDecoration(
+                                      labelText: 'Номер телефона'),
                                   validator: (value) => value!.isEmpty
-                                      ? 'Enter phone number'
+                                      ? 'Введите номер телефона'
                                       : null,
                                 ),
                                 TextFormField(
@@ -133,12 +132,12 @@ class _OrderPageState extends State<OrderPage> {
                                   decoration:
                                       InputDecoration(labelText: 'Email'),
                                   validator: (value) =>
-                                      value!.isEmpty ? 'Enter email' : null,
+                                      value!.isEmpty ? 'Введите email' : null,
                                 ),
                                 TextFormField(
                                   controller: _commentsController,
                                   decoration:
-                                      InputDecoration(labelText: 'Comments'),
+                                      InputDecoration(labelText: 'Комментарий'),
                                 ),
                                 SizedBox(height: 20),
                                 ElevatedButton(
@@ -159,7 +158,7 @@ class _OrderPageState extends State<OrderPage> {
                                           );
                                     }
                                   },
-                                  child: Text('Submit Order'),
+                                  child: Text('Перейти к оплате'),
                                 ),
                               ],
                             ),

@@ -17,7 +17,7 @@ class CartItemWidget extends StatelessWidget {
             (cartItem.selectedVolume != null
                 ? " (${cartItem.selectedVolume})"
                 : "")),
-        subtitle: Text('Price: \$${cartItem.product.price.toStringAsFixed(2)}'),
+        subtitle: Text('Цена: ${cartItem.product.price.toStringAsFixed(2)}₽'),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

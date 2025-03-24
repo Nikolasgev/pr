@@ -18,7 +18,7 @@ class OrderSuccessPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Order Successful'),
+        title: const Text('Заказ оплачен'),
         automaticallyImplyLeading: false,
       ),
       body: LayoutBuilder(
@@ -42,7 +42,7 @@ class OrderSuccessPage extends StatelessWidget {
                       children: [
                         // Id заказа вверху
                         Text(
-                          'Order ID: ${order.id}',
+                          'ID заказа: ${order.id}',
                           style: TextStyle(
                             fontSize: 20 * scaleFactor,
                             fontWeight: FontWeight.bold,
@@ -74,7 +74,7 @@ class OrderSuccessPage extends StatelessWidget {
                         ),
                         SizedBox(height: 8 * scaleFactor),
                         Text(
-                          'Total: \$${totalPrice.toStringAsFixed(2)}',
+                          'Сумма: ${totalPrice.toStringAsFixed(2)}₽',
                           style: TextStyle(
                             fontSize: 18 * scaleFactor,
                             fontWeight: FontWeight.bold,
@@ -83,7 +83,7 @@ class OrderSuccessPage extends StatelessWidget {
                         ),
                         SizedBox(height: 8 * scaleFactor),
                         Text(
-                          'Items: $totalQuantity',
+                          'Товары: $totalQuantity',
                           style: TextStyle(fontSize: 16 * scaleFactor),
                           textAlign: TextAlign.center,
                         ),
@@ -101,7 +101,7 @@ class OrderSuccessPage extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'Back to Home',
+                            'Вернуться к каталогу',
                             style: TextStyle(fontSize: 16 * scaleFactor),
                           ),
                         ),

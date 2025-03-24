@@ -13,7 +13,14 @@ class CatalogPage extends StatefulWidget {
 }
 
 class _CatalogPageState extends State<CatalogPage> {
-  String selectedCategory = 'All';
+  String selectedCategory = 'Все';
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,35 +28,45 @@ class _CatalogPageState extends State<CatalogPage> {
       create: (_) => sl<CatalogBloc>()..add(LoadProducts()),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Periche',
             style: TextStyle(fontWeight: FontWeight.w900),
           ),
           leading: IconButton(
-            icon: Icon(Icons.admin_panel_settings),
+            icon: const Icon(Icons.admin_panel_settings),
             onPressed: () => Navigator.pushNamed(context, '/admin'),
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.shopping_cart),
+              icon: const Icon(Icons.shopping_cart),
               onPressed: () => Navigator.pushNamed(context, '/cart'),
             )
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _scrollController.animateTo(
+              0.0,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOut,
+            );
+          },
+          child: const Icon(Icons.arrow_upward),
+        ),
         body: BlocBuilder<CatalogBloc, CatalogState>(
           builder: (context, state) {
             if (state is CatalogLoading) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (state is CatalogLoaded) {
               // Собираем уникальные категории
-              final categories = <String>{'All'};
+              final categories = <String>{'Все'};
               for (var product in state.products) {
                 categories.add(product.category);
               }
               final categoryList = categories.toList();
 
               // Фильтруем товары по выбранной категории
-              final filteredProducts = selectedCategory == 'All'
+              final filteredProducts = selectedCategory == 'Все'
                   ? state.products
                   : state.products
                       .where((p) => p.category == selectedCategory)
@@ -83,14 +100,15 @@ class _CatalogPageState extends State<CatalogPage> {
                   ),
                   Expanded(
                     child: filteredProducts.isEmpty
-                        ? Center(
+                        ? const Center(
                             child: Text('No products found in this category'))
                         : Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: GridView.builder(
+                              controller: _scrollController,
                               itemCount: filteredProducts.length,
                               gridDelegate:
-                                  SliverGridDelegateWithMaxCrossAxisExtent(
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
                                 maxCrossAxisExtent:
                                     300, // максимальная ширина карточки, подбирайте по вкусу
                                 mainAxisSpacing: 12.0,
@@ -99,10 +117,13 @@ class _CatalogPageState extends State<CatalogPage> {
                               ),
                               itemBuilder: (context, index) {
                                 return ProductCard(
-                                    product: filteredProducts[index]);
+                                  product: filteredProducts[index],
+                                );
                               },
-                            )),
+                            ),
+                          ),
                   ),
+                  const SizedBox(height: 30),
                 ],
               );
             } else if (state is CatalogError) {
