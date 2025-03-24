@@ -120,56 +120,75 @@ class ProductCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '\$${product.price}',
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                        SizedBox(
+                          width: constraints.maxWidth,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    '${product.price}',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    '₽',
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.add_shopping_cart),
-                              onPressed: () async {
-                                // Проверяем, заполнено ли поле объема.
-                                if (product.volume != null &&
-                                    product.volume!.isNotEmpty) {
-                                  print('volume is NOT EMPTY');
-                                  // Показываем диалог выбора объема.
-                                  final selectedVolume =
-                                      await showVolumeSelectorDialog(
-                                    context,
-                                    product.volume!,
-                                    initialValue: product.volume!.first,
-                                  );
-                                  if (selectedVolume != null) {
-                                    sl<CartBloc>().add(AddProductToCart(
-                                      product: product,
-                                      selectedVolume: selectedVolume,
-                                    ));
+                              IconButton(
+                                iconSize: 28,
+                                color: const Color.fromARGB(255, 83, 119, 42),
+                                icon: const Icon(Icons.add_shopping_cart),
+                                onPressed: () async {
+                                  // Проверяем, заполнено ли поле объема.
+                                  if (product.volume != null &&
+                                      product.volume!.isNotEmpty) {
+                                    // Показываем диалог выбора объема.
+                                    final selectedVolume =
+                                        await showVolumeSelectorDialog(
+                                      context,
+                                      product.volume!,
+                                      initialValue: product.volume!.first,
+                                    );
+                                    if (selectedVolume != null) {
+                                      sl<CartBloc>().add(AddProductToCart(
+                                        product: product,
+                                        selectedVolume: selectedVolume,
+                                      ));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 200, 200, 200),
+                                          content: Text(
+                                              '${product.name} ($selectedVolume) добавлен в корзину'),
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    sl<CartBloc>().add(
+                                        AddProductToCart(product: product));
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
+                                        backgroundColor: const Color.fromARGB(
+                                            255, 200, 200, 200),
                                         content: Text(
-                                            '${product.name} ($selectedVolume) добавлен в корзину'),
+                                            '${product.name} добавлен в корзину'),
                                       ),
                                     );
                                   }
-                                } else {
-                                  print('volume is EMPTY');
-                                  sl<CartBloc>()
-                                      .add(AddProductToCart(product: product));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          '${product.name} добавлен в корзину'),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                          ],
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

@@ -21,7 +21,10 @@ class _CatalogPageState extends State<CatalogPage> {
       create: (_) => sl<CatalogBloc>()..add(LoadProducts()),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Catalog'),
+          title: Text(
+            'Periche',
+            style: TextStyle(fontWeight: FontWeight.w900),
+          ),
           leading: IconButton(
             icon: Icon(Icons.admin_panel_settings),
             onPressed: () => Navigator.pushNamed(context, '/admin'),
