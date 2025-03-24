@@ -10,6 +10,7 @@
 .history
 .svn/
 .swiftpm/
+.cache
 migrate_working_dir/
 
 # IntelliJ related
@@ -46,4 +47,3 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-.firebase/hosting.YnVpbGQvd2Vi.cache
