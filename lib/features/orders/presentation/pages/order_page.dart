@@ -54,120 +54,124 @@ class _OrderPageState extends State<OrderPage> {
         },
         child: Builder(
           builder: (context) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text('Заказ'),
-              ),
-              body: FutureBuilder<Cart>(
-                future: _fetchCart(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  final cart = snapshot.data!;
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          // Список товаров из корзины
-                          Text(
-                            'Сумма заказа',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: cart.items.length,
-                            itemBuilder: (context, index) {
-                              final item = cart.items[index];
-                              return ListTile(
-                                title: Text(item.product.name),
-                                subtitle: Text(
-                                    'Цена: ${item.product.price.toStringAsFixed(2)}₽  x  ${item.quantity}'),
-                                trailing: Text(
-                                    '${(item.product.price * item.quantity).toStringAsFixed(2)}₽'),
-                              );
-                            },
-                          ),
-                          Divider(),
-                          // Итоговая сумма
-                          ListTile(
-                            title: Text('Сумма'),
-                            trailing: Text(
-                              '${cart.totalPrice.toStringAsFixed(2)}₽',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+            return SafeArea(
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text('Заказ'),
+                ),
+                body: FutureBuilder<Cart>(
+                  future: _fetchCart(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    final cart = snapshot.data!;
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            // Список товаров из корзины
+                            Text(
+                              'Сумма заказа',
+                              style: Theme.of(context).textTheme.titleLarge,
                             ),
-                          ),
-                          SizedBox(height: 20),
-                          // Форма для ввода данных клиента
-                          Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                TextFormField(
-                                  controller: _clientNameController,
-                                  decoration: InputDecoration(labelText: 'ФИО'),
-                                  validator: (value) => value!.isEmpty
-                                      ? 'Введите своё ФИО'
-                                      : null,
-                                ),
-                                TextFormField(
-                                  controller: _addressController,
-                                  decoration:
-                                      InputDecoration(labelText: 'Адрес'),
-                                  validator: (value) =>
-                                      value!.isEmpty ? 'Введите адрес' : null,
-                                ),
-                                TextFormField(
-                                  controller: _phoneController,
-                                  decoration: InputDecoration(
-                                      labelText: 'Номер телефона'),
-                                  validator: (value) => value!.isEmpty
-                                      ? 'Введите номер телефона'
-                                      : null,
-                                ),
-                                TextFormField(
-                                  controller: _emailController,
-                                  decoration:
-                                      InputDecoration(labelText: 'Email'),
-                                  validator: (value) =>
-                                      value!.isEmpty ? 'Введите email' : null,
-                                ),
-                                TextFormField(
-                                  controller: _commentsController,
-                                  decoration:
-                                      InputDecoration(labelText: 'Комментарий'),
-                                ),
-                                SizedBox(height: 20),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      final order = Order(
-                                        id: generateOrderId(),
-                                        clientName: _clientNameController.text,
-                                        address: _addressController.text,
-                                        phone: _phoneController.text,
-                                        email: _emailController.text,
-                                        comments: _commentsController.text,
-                                        items: cart.items,
-                                        status: 'Pending',
-                                      );
-                                      context.read<OrderBloc>().add(
-                                            PlaceOrderEvent(order: order),
-                                          );
-                                    }
-                                  },
-                                  child: Text('Перейти к оплате'),
-                                ),
-                              ],
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: cart.items.length,
+                              itemBuilder: (context, index) {
+                                final item = cart.items[index];
+                                return ListTile(
+                                  title: Text(item.product.name),
+                                  subtitle: Text(
+                                      'Цена: ${item.product.price.toStringAsFixed(2)}₽  x  ${item.quantity}'),
+                                  trailing: Text(
+                                      '${(item.product.price * item.quantity).toStringAsFixed(2)}₽'),
+                                );
+                              },
                             ),
-                          ),
-                        ],
+                            Divider(),
+                            // Итоговая сумма
+                            ListTile(
+                              title: Text('Сумма'),
+                              trailing: Text(
+                                '${cart.totalPrice.toStringAsFixed(2)}₽',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            // Форма для ввода данных клиента
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  TextFormField(
+                                    controller: _clientNameController,
+                                    decoration:
+                                        InputDecoration(labelText: 'ФИО'),
+                                    validator: (value) => value!.isEmpty
+                                        ? 'Введите своё ФИО'
+                                        : null,
+                                  ),
+                                  TextFormField(
+                                    controller: _addressController,
+                                    decoration:
+                                        InputDecoration(labelText: 'Адрес'),
+                                    validator: (value) =>
+                                        value!.isEmpty ? 'Введите адрес' : null,
+                                  ),
+                                  TextFormField(
+                                    controller: _phoneController,
+                                    decoration: InputDecoration(
+                                        labelText: 'Номер телефона'),
+                                    validator: (value) => value!.isEmpty
+                                        ? 'Введите номер телефона'
+                                        : null,
+                                  ),
+                                  TextFormField(
+                                    controller: _emailController,
+                                    decoration:
+                                        InputDecoration(labelText: 'Email'),
+                                    validator: (value) =>
+                                        value!.isEmpty ? 'Введите email' : null,
+                                  ),
+                                  TextFormField(
+                                    controller: _commentsController,
+                                    decoration: InputDecoration(
+                                        labelText: 'Комментарий'),
+                                  ),
+                                  SizedBox(height: 20),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        final order = Order(
+                                          id: generateOrderId(),
+                                          clientName:
+                                              _clientNameController.text,
+                                          address: _addressController.text,
+                                          phone: _phoneController.text,
+                                          email: _emailController.text,
+                                          comments: _commentsController.text,
+                                          items: cart.items,
+                                          status: 'Pending',
+                                        );
+                                        context.read<OrderBloc>().add(
+                                              PlaceOrderEvent(order: order),
+                                            );
+                                      }
+                                    },
+                                    child: Text('Перейти к оплате'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             );
           },

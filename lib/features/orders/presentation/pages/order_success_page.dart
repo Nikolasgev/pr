@@ -16,103 +16,105 @@ class OrderSuccessPage extends StatelessWidget {
     // Базовая ширина для масштабирования (например, 375 пикселей)
     const baseWidth = 375.0;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Заказ оплачен'),
-        automaticallyImplyLeading: false,
-      ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          // Если экран меньше 600 – используем его полную ширину, иначе фиксируем 600
-          final effectiveWidth =
-              constraints.maxWidth < 600 ? constraints.maxWidth : 600.0;
-          // Вычисляем scaleFactor на основе effectiveWidth
-          final scaleFactor = effectiveWidth / baseWidth;
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Заказ оплачен'),
+          automaticallyImplyLeading: false,
+        ),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            // Если экран меньше 600 – используем его полную ширину, иначе фиксируем 600
+            final effectiveWidth =
+                constraints.maxWidth < 600 ? constraints.maxWidth : 600.0;
+            // Вычисляем scaleFactor на основе effectiveWidth
+            final scaleFactor = effectiveWidth / baseWidth;
 
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Center(
-                child: SizedBox(
-                  width: effectiveWidth,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Id заказа вверху
-                        Text(
-                          'ID заказа: ${order.id}',
-                          style: TextStyle(
-                            fontSize: 20 * scaleFactor,
-                            fontWeight: FontWeight.bold,
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Center(
+                  child: SizedBox(
+                    width: effectiveWidth,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Id заказа вверху
+                          Text(
+                            'ID заказа: ${order.id}',
+                            style: TextStyle(
+                              fontSize: 20 * scaleFactor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 32 * scaleFactor),
-                        // Большая зеленая галочка
-                        Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 120 * scaleFactor,
-                        ),
-                        SizedBox(height: 32 * scaleFactor),
-                        // Основная информация о заказе
-                        Text(
-                          order.clientName,
-                          style: TextStyle(fontSize: 18 * scaleFactor),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 8 * scaleFactor),
-                        Text(
-                          order.address,
-                          style: TextStyle(
-                            fontSize: 16 * scaleFactor,
-                            color: Colors.grey[700],
+                          SizedBox(height: 32 * scaleFactor),
+                          // Большая зеленая галочка
+                          Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 120 * scaleFactor,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 8 * scaleFactor),
-                        Text(
-                          'Сумма: ${totalPrice.toStringAsFixed(2)}₽',
-                          style: TextStyle(
-                            fontSize: 18 * scaleFactor,
-                            fontWeight: FontWeight.bold,
+                          SizedBox(height: 32 * scaleFactor),
+                          // Основная информация о заказе
+                          Text(
+                            order.clientName,
+                            style: TextStyle(fontSize: 18 * scaleFactor),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 8 * scaleFactor),
-                        Text(
-                          'Товары: $totalQuantity',
-                          style: TextStyle(fontSize: 16 * scaleFactor),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 32 * scaleFactor),
-                        // Кнопка возврата на главный экран
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/', (Route<dynamic> route) => false);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.0 * scaleFactor,
-                              vertical: 12.0 * scaleFactor,
+                          SizedBox(height: 8 * scaleFactor),
+                          Text(
+                            order.address,
+                            style: TextStyle(
+                              fontSize: 16 * scaleFactor,
+                              color: Colors.grey[700],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 8 * scaleFactor),
+                          Text(
+                            'Сумма: ${totalPrice.toStringAsFixed(2)}₽',
+                            style: TextStyle(
+                              fontSize: 18 * scaleFactor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 8 * scaleFactor),
+                          Text(
+                            'Товары: $totalQuantity',
+                            style: TextStyle(fontSize: 16 * scaleFactor),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 32 * scaleFactor),
+                          // Кнопка возврата на главный экран
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamedAndRemoveUntil(context, '/',
+                                  (Route<dynamic> route) => false);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.0 * scaleFactor,
+                                vertical: 12.0 * scaleFactor,
+                              ),
+                            ),
+                            child: Text(
+                              'Вернуться к каталогу',
+                              style: TextStyle(fontSize: 16 * scaleFactor),
                             ),
                           ),
-                          child: Text(
-                            'Вернуться к каталогу',
-                            style: TextStyle(fontSize: 16 * scaleFactor),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
