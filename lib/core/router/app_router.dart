@@ -45,11 +45,7 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => ProductDetailPage(product: product));
       default:
-        return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(child: Text('Route not found')),
-          ),
-        );
+        return MaterialPageRoute(builder: (_) => CatalogPage());
     }
   }
 }
