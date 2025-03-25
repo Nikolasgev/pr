@@ -14,9 +14,13 @@
     <link rel="manifest" href="manifest.json">
     <script>
       if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.allow_vertical_swipe = false;   
+        window.Telegram.WebApp.allow_vertical_swipe = false;
       }
     </script>
+     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+     <script>
+       Telegram.WebApp.disableVerticalSwipes();
+     </script>
   </head>
   <body>
     <script src="flutter_bootstrap.js" async></script>

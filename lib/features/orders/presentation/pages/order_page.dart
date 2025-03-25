@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:per_shop/core/utils/telegram_helper.dart';
 import 'package:per_shop/features/orders/presentation/blocs/order_bloc.dart';
 
 import '../../../../injection_container.dart';
@@ -143,8 +144,27 @@ class _OrderPageState extends State<OrderPage> {
                                   ),
                                   SizedBox(height: 20),
                                   ElevatedButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
+                                        // Асинхронно получаем данные Telegram
+                                        final telegramUserId =
+                                            await getTelegramUserId();
+                                        // ignore: use_build_context_synchronously
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  'getTelegramUserIdDelayed -> $telegramUserId')),
+                                        );
+                                        final telegramUsername =
+                                            await getTelegramUsername();
+                                        // ignore: use_build_context_synchronously
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  'getTelegramUsernameDelayed -> $telegramUsername')),
+                                        );
                                         final order = Order(
                                           id: generateOrderId(),
                                           clientName:
@@ -155,10 +175,12 @@ class _OrderPageState extends State<OrderPage> {
                                           comments: _commentsController.text,
                                           items: cart.items,
                                           status: 'Pending',
+                                          telegramUserId: telegramUserId,
+                                          telegramUsername: telegramUsername,
                                         );
-                                        context.read<OrderBloc>().add(
-                                              PlaceOrderEvent(order: order),
-                                            );
+                                        context
+                                            .read<OrderBloc>()
+                                            .add(PlaceOrderEvent(order: order));
                                       }
                                     },
                                     child: Text('Перейти к оплате'),

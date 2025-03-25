@@ -9,6 +9,8 @@ class Order {
   final String comments;
   final List<CartItem> items; // изменили с List<Product> на List<CartItem>
   final String status;
+  final String? telegramUserId; // новое поле для Telegram ID
+  final String? telegramUsername; // новое поле для Telegram username
 
   Order({
     required this.id,
@@ -19,5 +21,7 @@ class Order {
     required this.comments,
     required this.items,
     required this.status,
+    this.telegramUserId,
+    this.telegramUsername,
   });
 }

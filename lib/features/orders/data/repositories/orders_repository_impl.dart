@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:per_shop/core/constants/app_constants.dart';
 import 'package:per_shop/core/firebase/firebase_service.dart';
+import 'package:per_shop/core/utils/telegram_helper.dart';
 import 'package:per_shop/features/cart/domain/entities/cart_item.dart';
 import 'package:per_shop/features/catalog/domain/entities/product.dart';
 import 'package:per_shop/features/orders/domain/entities/order.dart';
@@ -10,7 +11,12 @@ class OrdersRepositoryImpl {
 
   Future<void> placeOrder(Order order) async {
     try {
-      // Преобразуем заказ в Map, который соответствует структуре Firestore
+      // Если в заказе не заданы данные Telegram, пытаемся их получить.
+      final telegramUserId = order.telegramUserId ?? await getTelegramUserId();
+      final telegramUsername =
+          order.telegramUsername ?? await getTelegramUsername();
+
+      // Преобразуем заказ в Map для сохранения в Firestore.
       final orderData = {
         'clientName': order.clientName,
         'address': order.address,
@@ -31,10 +37,10 @@ class OrdersRepositoryImpl {
           };
         }).toList(),
         'createdAt': FieldValue.serverTimestamp(),
+        'telegramUserId': telegramUserId,
+        'telegramUsername': telegramUsername,
       };
 
-      // Используем set() с заданным идентификатором заказа, чтобы гарантированно сохранить все данные,
-      // включая список товаров (items)
       await firebaseService.firestore
           .collection(AppConstants.firebaseCollectionOrders)
           .doc(order.id)
@@ -73,6 +79,7 @@ class OrdersRepositoryImpl {
           comments: data['comments'],
           items: items,
           status: data['status'],
+          // Данные Telegram можно при необходимости извлечь, если сохранены в Firestore.
         );
       }).toList();
     } catch (e) {

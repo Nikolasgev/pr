@@ -43,6 +43,8 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
                 Text("Телефон: ${widget.order.phone}"),
                 Text("Email: ${widget.order.email}"),
                 Text("Комментарии: ${widget.order.comments}"),
+                Text("telegramUserId: ${widget.order.telegramUserId}"),
+                Text("telegramUsername: ${widget.order.telegramUsername}"),
                 const SizedBox(height: 16),
                 Text("Статус заказа:",
                     style: const TextStyle(fontWeight: FontWeight.bold)),

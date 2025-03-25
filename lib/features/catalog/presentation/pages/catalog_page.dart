@@ -60,7 +60,7 @@ class _CatalogPageState extends State<CatalogPage> {
                 return const Center(child: CircularProgressIndicator());
               } else if (state is CatalogLoaded) {
                 // Собираем уникальные категории
-                final categories = <String>{'Всеx'};
+                final categories = <String>{'Все'};
                 for (var product in state.products) {
                   categories.add(product.category);
                 }
