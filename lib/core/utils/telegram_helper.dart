@@ -4,55 +4,96 @@ import 'dart:html' as html;
 import 'dart:js' as js;
 import 'dart:js_util' as js_util;
 
-/// Получает данные пользователя из Telegram Mini Apps
+/// Асинхронно получает данные пользователя из Telegram WebApp.
+/// Если данные не получены, выводит alert с сообщением об ошибке.
 Future<Map<String, dynamic>?> getTelegramUserData() async {
   try {
-    // Инициализация WebApp (правильная обработка Promise) [[3]][[7]]
-    if (js.context['Telegram']?['WebApp'] == null) {
+    // Проверяем, что объект Telegram доступен
+    var telegram = js.context['Telegram'];
+    if (telegram == null) {
       html.window.alert('Запустите приложение внутри Telegram!');
       return null;
     }
 
-    await js_util.promiseToFuture(js_util
-        .getProperty(js.context['Telegram']['WebApp'], 'ready')
-        ?.call([]));
-
-    // Получение и декодирование данных [[9]]
-    String initDataUnsafe =
-        js_util.getProperty(js.context['Telegram']['WebApp'], 'initDataUnsafe');
-
-    if (initDataUnsafe.isEmpty) {
-      html.window.alert('Ошибка: Данные не получены от Telegram');
+    var webApp = telegram['WebApp'];
+    if (webApp == null) {
+      html.window.alert('Ошибка: объект WebApp не найден.');
       return null;
     }
 
-    String decodedData = Uri.decodeComponent(initDataUnsafe);
+    // Проверяем, существует ли функция ready, и если да, вызываем её
+    var readyProp = js_util.getProperty(webApp, 'ready');
+    if (readyProp is Function) {
+      // Если ready возвращает Promise, ждём его завершения
+      await js_util.promiseToFuture(readyProp([]));
+    } else {
+      html.window.console
+          .log('Свойство "ready" не является функцией, пропускаем вызов.');
+    }
+
+    // Получаем initDataUnsafe
+    var initDataUnsafe = js_util.getProperty(webApp, 'initDataUnsafe');
+    if (initDataUnsafe == null) {
+      html.window.alert('Ошибка: initDataUnsafe отсутствует.');
+      return null;
+    }
+
+    // Если initDataUnsafe не строка, сериализуем его
+    String initDataStr;
+    if (initDataUnsafe is String) {
+      initDataStr = initDataUnsafe;
+    } else {
+      initDataStr = js.context.callMethod('JSON.stringify', [initDataUnsafe]);
+    }
+
+    if (initDataStr.isEmpty) {
+      html.window.alert('Ошибка: Данные не получены от Telegram.');
+      return null;
+    }
+
+    // Декодируем данные
+    String decodedData = Uri.decodeComponent(initDataStr);
     Map<String, dynamic> initData = jsonDecode(decodedData);
-    return initData['user'];
+
+    if (initData.containsKey('user')) {
+      return Map<String, dynamic>.from(initData['user']);
+    } else {
+      html.window.alert(
+          'Ошибка: Данные пользователя не найдены в initDataUnsafe.\nПолные данные: $decodedData');
+      return null;
+    }
   } catch (e) {
-    html.window.alert('Ошибка получения данных: $e');
+    html.window.alert('Ошибка получения данных Telegram: $e');
     return null;
   }
 }
 
-/// Получает Telegram User ID
+/// Возвращает Telegram ID пользователя в виде строки, если доступен.
 Future<String?> getTelegramUserId() async {
   try {
-    var user = await getTelegramUserData();
-    return user?['id']?.toString();
+    var userData = await getTelegramUserData();
+    var id = userData?['id']?.toString();
+    if (id == null) {
+      html.window.alert('Ошибка: Telegram User ID не получен.');
+    }
+    return id;
   } catch (e) {
-    html.window.alert('Ошибка получения ID: $e');
+    html.window.alert('Ошибка получения Telegram User ID: $e');
     return null;
   }
 }
 
-/// Получает Telegram username
+/// Возвращает username пользователя Telegram, если доступен.
 Future<String?> getTelegramUsername() async {
   try {
-    var user = await getTelegramUserData();
-    return user?['username'];
+    var userData = await getTelegramUserData();
+    var username = userData?['username'];
+    if (username == null) {
+      html.window.alert('Ошибка: Telegram username не получен.');
+    }
+    return username;
   } catch (e) {
-    html.window.alert('Ошибка получения username: $e');
+    html.window.alert('Ошибка получения Telegram username: $e');
     return null;
   }
 }
