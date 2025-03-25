@@ -15,7 +15,7 @@ class AdminOrdersPage extends StatelessWidget {
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Заказы 009'),
+            title: const Text('Заказы 010'),
           ),
           body: BlocBuilder<AdminOrdersBloc, AdminOrdersState>(
             builder: (context, state) {

@@ -4,46 +4,45 @@ import 'dart:html' as html;
 import 'dart:js' as js;
 import 'dart:js_util' as js_util;
 
-/// Асинхронно получает данные пользователя из Telegram WebApp.
-/// Если данные не получены, выводит alert с сообщением об ошибке.
+/// Асинхронно получает данные пользователя из Telegram Mini Apps.
+/// Если данные не получены, выводит alert с информацией об ошибке.
 Future<Map<String, dynamic>?> getTelegramUserData() async {
   try {
-    // Проверяем, что объект Telegram доступен
+    // Получаем объект Telegram
     var telegram = js.context['Telegram'];
+    html.window.console.log('telegram object: $telegram');
     if (telegram == null) {
       html.window.alert('Запустите приложение внутри Telegram!');
       return null;
     }
 
+    // Получаем объект WebApp
     var webApp = telegram['WebApp'];
+    html.window.console.log('webApp object: $webApp');
     if (webApp == null) {
       html.window.alert('Ошибка: объект WebApp не найден.');
       return null;
     }
 
-    // Проверяем, существует ли функция ready, и если да, вызываем её
-    var readyProp = js_util.getProperty(webApp, 'ready');
-    if (readyProp is Function) {
-      // Если ready возвращает Promise, ждём его завершения
-      await js_util.promiseToFuture(readyProp([]));
-    } else {
-      html.window.console
-          .log('Свойство "ready" не является функцией, пропускаем вызов.');
-    }
+    // Выводим ключи объекта WebApp для отладки
+    var keys = js.context.callMethod('Object.keys', [webApp]);
+    html.window.console.log('WebApp keys: $keys');
 
-    // Получаем initDataUnsafe
-    var initDataUnsafe = js_util.getProperty(webApp, 'initDataUnsafe');
-    if (initDataUnsafe == null) {
-      html.window.alert('Ошибка: initDataUnsafe отсутствует.');
+    // Пытаемся получить данные: сначала initDataUnsafe, если его нет – initData
+    var initData = js_util.getProperty(webApp, 'initDataUnsafe') ??
+        js_util.getProperty(webApp, 'initData');
+    html.window.console.log('initData: $initData');
+    if (initData == null || (initData is String && initData.isEmpty)) {
+      html.window.alert('Ошибка: initData отсутствует.');
       return null;
     }
 
-    // Если initDataUnsafe не строка, сериализуем его
+    // Если полученные данные не строка, сериализуем их через JSON.stringify
     String initDataStr;
-    if (initDataUnsafe is String) {
-      initDataStr = initDataUnsafe;
+    if (initData is String) {
+      initDataStr = initData;
     } else {
-      initDataStr = js.context.callMethod('JSON.stringify', [initDataUnsafe]);
+      initDataStr = js.context.callMethod('JSON.stringify', [initData]);
     }
 
     if (initDataStr.isEmpty) {
@@ -51,28 +50,31 @@ Future<Map<String, dynamic>?> getTelegramUserData() async {
       return null;
     }
 
-    // Декодируем данные
+    // Декодируем строку, сначала через Uri.decodeComponent, затем через jsonDecode
     String decodedData = Uri.decodeComponent(initDataStr);
-    Map<String, dynamic> initData = jsonDecode(decodedData);
+    Map<String, dynamic> initDataMap = jsonDecode(decodedData);
+    html.window.console.log('initDataMap: $initDataMap');
 
-    if (initData.containsKey('user')) {
-      return Map<String, dynamic>.from(initData['user']);
+    if (initDataMap.containsKey('user')) {
+      return Map<String, dynamic>.from(initDataMap['user']);
     } else {
       html.window.alert(
-          'Ошибка: Данные пользователя не найдены в initDataUnsafe.\nПолные данные: $decodedData');
+          'Ошибка: Данные пользователя не найдены.\nПолные данные: $decodedData');
       return null;
     }
   } catch (e) {
     html.window.alert('Ошибка получения данных Telegram: $e');
+    html.window.console.log('Exception in getTelegramUserData: $e');
     return null;
   }
 }
 
-/// Возвращает Telegram ID пользователя в виде строки, если доступен.
+/// Асинхронно возвращает Telegram User ID в виде строки, если доступен.
 Future<String?> getTelegramUserId() async {
   try {
     var userData = await getTelegramUserData();
     var id = userData?['id']?.toString();
+    html.window.console.log('Telegram User ID: ${id ?? 'null'}');
     if (id == null) {
       html.window.alert('Ошибка: Telegram User ID не получен.');
     }
@@ -83,11 +85,12 @@ Future<String?> getTelegramUserId() async {
   }
 }
 
-/// Возвращает username пользователя Telegram, если доступен.
+/// Асинхронно возвращает Telegram username, если доступен.
 Future<String?> getTelegramUsername() async {
   try {
     var userData = await getTelegramUserData();
     var username = userData?['username'];
+    html.window.console.log('Telegram username: ' + (username ?? 'null'));
     if (username == null) {
       html.window.alert('Ошибка: Telegram username не получен.');
     }
