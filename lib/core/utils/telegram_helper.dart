@@ -4,15 +4,16 @@ import 'dart:html' as html;
 import 'dart:js' as js;
 import 'dart:js_util' as js_util;
 
-/// Асинхронно получает данные пользователя из Telegram Mini Apps.
+/// Асинхронно получает данные пользователя из Telegram WebApp.
 /// Если данные не получены, выводит alert с информацией об ошибке.
 Future<Map<String, dynamic>?> getTelegramUserData() async {
   try {
-    // Получаем объект Telegram
+    // Получаем объект Telegram через dart:js
     var telegram = js.context['Telegram'];
     html.window.console.log('telegram object: $telegram');
     if (telegram == null) {
-      html.window.alert('Запустите приложение внутри Telegram!');
+      html.window.alert(
+          'Ошибка: Telegram object отсутствует. Запустите приложение внутри Telegram.');
       return null;
     }
 
@@ -20,48 +21,43 @@ Future<Map<String, dynamic>?> getTelegramUserData() async {
     var webApp = telegram['WebApp'];
     html.window.console.log('webApp object: $webApp');
     if (webApp == null) {
-      html.window.alert('Ошибка: объект WebApp не найден.');
+      html.window.alert('Ошибка: WebApp object отсутствует.');
       return null;
     }
 
-    // Выводим ключи объекта WebApp для отладки
-    var keys = js.context.callMethod('Object.keys', [webApp]);
-    html.window.console.log('WebApp keys: $keys');
-
-    // Пытаемся получить данные: сначала initDataUnsafe, если его нет – initData
-    var initData = js_util.getProperty(webApp, 'initDataUnsafe') ??
-        js_util.getProperty(webApp, 'initData');
-    html.window.console.log('initData: $initData');
-    if (initData == null || (initData is String && initData.isEmpty)) {
-      html.window.alert('Ошибка: initData отсутствует.');
+    // Пытаемся получить данные через initDataUnsafe
+    var initDataUnsafe = webApp['initDataUnsafe'];
+    html.window.console.log('initDataUnsafe object: $initDataUnsafe');
+    if (initDataUnsafe == null) {
+      html.window.alert('Ошибка: initDataUnsafe отсутствует.');
       return null;
     }
 
-    // Если полученные данные не строка, сериализуем их через JSON.stringify
-    String initDataStr;
-    if (initData is String) {
-      initDataStr = initData;
-    } else {
-      initDataStr = js.context.callMethod('JSON.stringify', [initData]);
-    }
+    // Выводим полностью полученные данные для отладки
+    var initDataJson =
+        js.context.callMethod('JSON.stringify', [initDataUnsafe]);
+    html.window.console.log('initDataUnsafe JSON: $initDataJson');
 
-    if (initDataStr.isEmpty) {
-      html.window.alert('Ошибка: Данные не получены от Telegram.');
-      return null;
-    }
-
-    // Декодируем строку, сначала через Uri.decodeComponent, затем через jsonDecode
-    String decodedData = Uri.decodeComponent(initDataStr);
-    Map<String, dynamic> initDataMap = jsonDecode(decodedData);
-    html.window.console.log('initDataMap: $initDataMap');
-
-    if (initDataMap.containsKey('user')) {
-      return Map<String, dynamic>.from(initDataMap['user']);
-    } else {
+    // Пробуем получить ключ "user" из initDataUnsafe
+    if (!initDataUnsafe.hasProperty('user')) {
       html.window.alert(
-          'Ошибка: Данные пользователя не найдены.\nПолные данные: $decodedData');
+          'Ошибка: initDataUnsafe не содержит ключ "user". Полученные данные: $initDataJson');
       return null;
     }
+    var user = initDataUnsafe['user'];
+    html.window.console
+        .log('user object: ${user != null ? user.toString() : 'null'}');
+    if (user == null) {
+      html.window
+          .alert('Ошибка: user равен null. Полные данные: $initDataJson');
+      return null;
+    }
+
+    // Преобразуем user в Map<String, dynamic> с помощью JSON.stringify и jsonDecode
+    String userJson = js.context.callMethod('JSON.stringify', [user]);
+    Map<String, dynamic> userMap = jsonDecode(userJson);
+    html.window.console.log('User data map: $userMap');
+    return userMap;
   } catch (e) {
     html.window.alert('Ошибка получения данных Telegram: $e');
     html.window.console.log('Exception in getTelegramUserData: $e');
@@ -73,7 +69,7 @@ Future<Map<String, dynamic>?> getTelegramUserData() async {
 Future<String?> getTelegramUserId() async {
   try {
     var userData = await getTelegramUserData();
-    var id = userData?['id']?.toString();
+    var id = userData != null ? userData['id']?.toString() : null;
     html.window.console.log('Telegram User ID: ${id ?? 'null'}');
     if (id == null) {
       html.window.alert('Ошибка: Telegram User ID не получен.');
@@ -89,7 +85,7 @@ Future<String?> getTelegramUserId() async {
 Future<String?> getTelegramUsername() async {
   try {
     var userData = await getTelegramUserData();
-    var username = userData?['username'];
+    var username = userData != null ? userData['username'] : null;
     html.window.console.log('Telegram username: ' + (username ?? 'null'));
     if (username == null) {
       html.window.alert('Ошибка: Telegram username не получен.');
@@ -98,5 +94,18 @@ Future<String?> getTelegramUsername() async {
   } catch (e) {
     html.window.alert('Ошибка получения Telegram username: $e');
     return null;
+  }
+}
+
+/// Проверка наличия свойства в объекте js (поскольку объекты js не имеют метода hasProperty напрямую)
+extension JsObjectExt on Object {
+  bool hasProperty(String key) {
+    try {
+      // Если попытка получить свойство не выбросит исключение, значит свойство существует
+      js_util.getProperty(this, key);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 }
