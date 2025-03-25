@@ -60,7 +60,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           Text(widget.product.description),
                           const SizedBox(height: 8),
                           Text(
-                            '\$${widget.product.price.toString()}',
+                            '${widget.product.price.toString()}₽',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           // Если товар имеет варианты объёма, показываем селектор

@@ -149,22 +149,21 @@ class _OrderPageState extends State<OrderPage> {
                                         // Асинхронно получаем данные Telegram
                                         final telegramUserId =
                                             await getTelegramUserId();
-                                        // ignore: use_build_context_synchronously
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                              content: Text(
-                                                  'getTelegramUserIdDelayed -> $telegramUserId')),
-                                        );
                                         final telegramUsername =
                                             await getTelegramUsername();
-                                        // ignore: use_build_context_synchronously
+
+                                        // Показываем полученные данные в виде логов через SnackBar для отладки
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           SnackBar(
-                                              content: Text(
-                                                  'getTelegramUsernameDelayed -> $telegramUsername')),
+                                            content: Text(
+                                              'Telegram User ID: $telegramUserId\n'
+                                              'Telegram Username: $telegramUsername',
+                                            ),
+                                            duration: Duration(seconds: 3),
+                                          ),
                                         );
+
                                         final order = Order(
                                           id: generateOrderId(),
                                           clientName:
@@ -178,9 +177,9 @@ class _OrderPageState extends State<OrderPage> {
                                           telegramUserId: telegramUserId,
                                           telegramUsername: telegramUsername,
                                         );
-                                        context
-                                            .read<OrderBloc>()
-                                            .add(PlaceOrderEvent(order: order));
+                                        context.read<OrderBloc>().add(
+                                              PlaceOrderEvent(order: order),
+                                            );
                                       }
                                     },
                                     child: Text('Перейти к оплате'),
