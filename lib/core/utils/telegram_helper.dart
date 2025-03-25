@@ -2,52 +2,57 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:html' as html;
 import 'dart:js' as js;
+import 'dart:js_util' as js_util;
 
+/// Получает данные пользователя из Telegram Mini Apps
 Future<Map<String, dynamic>?> getTelegramUserData() async {
   try {
-    await js.context['Telegram']['WebApp']['ready']();
-    if (!js.context.hasProperty('Telegram')) {
+    // Инициализация WebApp (правильная обработка Promise) [[3]][[7]]
+    if (js.context['Telegram']?['WebApp'] == null) {
       html.window.alert('Запустите приложение внутри Telegram!');
       return null;
     }
 
-    String initDataUnsafe = js.context['Telegram']['WebApp']['initDataUnsafe'];
+    await js_util.promiseToFuture(js_util
+        .getProperty(js.context['Telegram']['WebApp'], 'ready')
+        ?.call([]));
+
+    // Получение и декодирование данных [[9]]
+    String initDataUnsafe =
+        js_util.getProperty(js.context['Telegram']['WebApp'], 'initDataUnsafe');
+
     if (initDataUnsafe.isEmpty) {
-      html.window.alert('Ошибка: initDataUnsafe пуст');
+      html.window.alert('Ошибка: Данные не получены от Telegram');
       return null;
     }
 
     String decodedData = Uri.decodeComponent(initDataUnsafe);
     Map<String, dynamic> initData = jsonDecode(decodedData);
-    Map<String, dynamic>? user = initData['user'];
-    if (user == null) {
-      html.window.alert('Ошибка: Данные пользователя отсутствуют');
-      return null;
-    }
-
-    return user;
+    return initData['user'];
   } catch (e) {
-    html.window.alert('Ошибка: $e');
+    html.window.alert('Ошибка получения данных: $e');
     return null;
   }
 }
 
+/// Получает Telegram User ID
 Future<String?> getTelegramUserId() async {
   try {
-    var userData = await getTelegramUserData();
-    return userData?['id']?.toString();
+    var user = await getTelegramUserData();
+    return user?['id']?.toString();
   } catch (e) {
-    html.window.alert('Ошибка при получении ID: $e');
+    html.window.alert('Ошибка получения ID: $e');
     return null;
   }
 }
 
+/// Получает Telegram username
 Future<String?> getTelegramUsername() async {
   try {
-    var userData = await getTelegramUserData();
-    return userData?['username'];
+    var user = await getTelegramUserData();
+    return user?['username'];
   } catch (e) {
-    html.window.alert('Ошибка при получении username: $e');
+    html.window.alert('Ошибка получения username: $e');
     return null;
   }
 }
