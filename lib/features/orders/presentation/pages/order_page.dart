@@ -148,9 +148,9 @@ class _OrderPageState extends State<OrderPage> {
                                       if (_formKey.currentState!.validate()) {
                                         // Асинхронно получаем данные Telegram
                                         final telegramUserId =
-                                            await getTelegramUserId();
+                                            await fetchTelegramUserId();
                                         final telegramUsername =
-                                            await getTelegramUsername();
+                                            await fetchTelegramUsername();
 
                                         // Показываем полученные данные в виде логов через SnackBar для отладки
                                         ScaffoldMessenger.of(context)

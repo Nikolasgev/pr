@@ -12,9 +12,10 @@ class OrdersRepositoryImpl {
   Future<void> placeOrder(Order order) async {
     try {
       // Если в заказе не заданы данные Telegram, пытаемся их получить.
-      final telegramUserId = order.telegramUserId ?? await getTelegramUserId();
+      final telegramUserId =
+          order.telegramUserId ?? await fetchTelegramUserId();
       final telegramUsername =
-          order.telegramUsername ?? await getTelegramUsername();
+          order.telegramUsername ?? await fetchTelegramUsername();
 
       // Преобразуем заказ в Map для сохранения в Firestore.
       final orderData = {
