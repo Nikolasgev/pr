@@ -14,7 +14,7 @@
     <link rel="manifest" href="manifest.json">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-      window.addEventListener('load', function() {
+      document.addEventListener('DOMContentLoaded', function() {
         console.log('window.Telegram:', window.Telegram);
         if (window.Telegram && window.Telegram.WebApp) {
           window.Telegram.WebApp.ready();
@@ -23,6 +23,7 @@
         }
       });
     </script>
+    
     <script>
       if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.allow_vertical_swipe = false;
