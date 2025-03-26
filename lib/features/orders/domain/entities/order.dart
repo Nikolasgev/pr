@@ -7,7 +7,7 @@ class Order {
   final String phone;
   final String email;
   final String comments;
-  final List<CartItem> items; // изменили с List<Product> на List<CartItem>
+  final List<CartItem> items;
   final String status;
   final String? telegramUserId; // новое поле для Telegram ID
   final String? telegramUsername; // новое поле для Telegram username

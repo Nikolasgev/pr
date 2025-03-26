@@ -80,7 +80,8 @@ class OrdersRepositoryImpl {
           comments: data['comments'],
           items: items,
           status: data['status'],
-          // Данные Telegram можно при необходимости извлечь, если сохранены в Firestore.
+          telegramUserId: data['telegramUserId'],
+          telegramUsername: data['telegramUsername'],
         );
       }).toList();
     } catch (e) {
