@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:per_shop/core/widgets/custom_snack_bar_widget.dart';
 import 'package:per_shop/features/cart/presentation/blocs/cart_bloc.dart';
 import 'package:per_shop/features/catalog/domain/entities/product.dart';
 import 'package:per_shop/injection_container.dart';
@@ -70,20 +71,13 @@ class ProductCard extends StatelessWidget {
           product: product,
           selectedVolume: selectedVolume,
         ));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content:
-                Text('${product.name} ($selectedVolume) добавлен в корзину'),
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(
+            message: '${product.name} ($selectedVolume) добавлен в корзину'));
       }
     } else {
       sl<CartBloc>().add(AddProductToCart(product: product));
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${product.name} добавлен в корзину'),
-        ),
-      );
+          CustomSnackBar(message: '${product.name} добавлен в корзину'));
     }
   }
 

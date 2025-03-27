@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:per_shop/core/widgets/custom_snack_bar_widget.dart';
 import 'package:per_shop/features/orders/domain/entities/order.dart';
 import 'package:per_shop/features/orders/presentation/blocs/admin_orders_bloc.dart';
 
@@ -67,8 +68,8 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
                             UpdateOrderStatusEvent(
                                 orderId: widget.order.id, newStatus: newStatus),
                           );
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Статус изменён на $newStatus")));
+                      ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(
+                          message: "Статус изменён на $newStatus"));
                     }
                   },
                 ),

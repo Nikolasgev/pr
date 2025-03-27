@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:per_shop/core/widgets/custom_action_button_widget.dart';
 import 'package:per_shop/features/orders/domain/entities/order.dart';
 
 class OrderSuccessPage extends StatelessWidget {
@@ -89,23 +90,13 @@ class OrderSuccessPage extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 32 * scaleFactor),
-                          // Кнопка возврата на главный экран
-                          ElevatedButton(
+                          CustomActionButton(
+                            label: 'Вернуться к каталогу',
                             onPressed: () {
                               Navigator.pushNamedAndRemoveUntil(context, '/',
                                   (Route<dynamic> route) => false);
                             },
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.0 * scaleFactor,
-                                vertical: 12.0 * scaleFactor,
-                              ),
-                            ),
-                            child: Text(
-                              'Вернуться к каталогу',
-                              style: TextStyle(fontSize: 16 * scaleFactor),
-                            ),
-                          ),
+                          )
                         ],
                       ),
                     ),

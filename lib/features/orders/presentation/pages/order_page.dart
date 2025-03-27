@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:per_shop/core/utils/telegram_helper.dart';
+import 'package:per_shop/core/widgets/custom_action_button_widget.dart';
 import 'package:per_shop/features/orders/presentation/blocs/order_bloc.dart';
 
 import '../../../../injection_container.dart';
@@ -143,7 +144,9 @@ class _OrderPageState extends State<OrderPage> {
                                         labelText: 'Комментарий'),
                                   ),
                                   SizedBox(height: 20),
-                                  ElevatedButton(
+                                  CustomActionButton(
+                                    icon: Icons.payment,
+                                    label: 'Перейти к оплате',
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
                                         // Асинхронно получаем данные Telegram
@@ -151,18 +154,6 @@ class _OrderPageState extends State<OrderPage> {
                                             await fetchTelegramUserId();
                                         final telegramUsername =
                                             await fetchTelegramUsername();
-
-                                        // Показываем полученные данные в виде логов через SnackBar для отладки
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Telegram User ID: $telegramUserId\n'
-                                              'Telegram Username: $telegramUsername',
-                                            ),
-                                            duration: Duration(seconds: 3),
-                                          ),
-                                        );
 
                                         final order = Order(
                                           id: generateOrderId(),
@@ -182,7 +173,6 @@ class _OrderPageState extends State<OrderPage> {
                                             );
                                       }
                                     },
-                                    child: Text('Перейти к оплате'),
                                   ),
                                 ],
                               ),
