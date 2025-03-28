@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:per_shop/core/utils/telegram_helper.dart';
+import 'package:per_shop/core/services/telegram_service.dart';
 import 'package:per_shop/core/widgets/custom_action_button_widget.dart';
 import 'package:per_shop/features/orders/presentation/blocs/order_bloc.dart';
 
@@ -149,11 +149,8 @@ class _OrderPageState extends State<OrderPage> {
                                     label: 'Перейти к оплате',
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        // Асинхронно получаем данные Telegram
-                                        final telegramUserId =
-                                            await fetchTelegramUserId();
-                                        final telegramUsername =
-                                            await fetchTelegramUsername();
+                                        final telegramUser =
+                                            sl<TelegramService>().user;
 
                                         final order = Order(
                                           id: generateOrderId(),
@@ -165,8 +162,10 @@ class _OrderPageState extends State<OrderPage> {
                                           comments: _commentsController.text,
                                           items: cart.items,
                                           status: 'Pending',
-                                          telegramUserId: telegramUserId,
-                                          telegramUsername: telegramUsername,
+                                          telegramUserId:
+                                              telegramUser.id.toString(),
+                                          telegramUsername:
+                                              telegramUser.username,
                                         );
                                         context.read<OrderBloc>().add(
                                               PlaceOrderEvent(order: order),

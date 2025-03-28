@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 
+import 'core/services/telegram_service.dart';
 import 'features/cart/data/repositories/cart_repository_impl.dart';
 import 'features/cart/domain/usecases/add_to_cart.dart';
 import 'features/cart/domain/usecases/remove_from_cart.dart';
@@ -15,6 +16,9 @@ import 'features/orders/presentation/blocs/order_bloc.dart';
 final sl = GetIt.instance;
 
 void setupInjection() {
+  // Регистрация TelegramService как синглтона
+  sl.registerLazySingleton<TelegramService>(() => TelegramService());
+
   // Catalog
   sl.registerLazySingleton<CatalogRepositoryImpl>(
       () => CatalogRepositoryImpl());
