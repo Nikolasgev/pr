@@ -24,4 +24,21 @@ class Order {
     this.telegramUserId,
     this.telegramUsername,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'orderId': id,
+      'clientName': clientName,
+      'address': address,
+      'phone': phone,
+      'email': email,
+      'comments': comments,
+      'status': status,
+      'telegramUserId': telegramUserId,
+      'telegramUsername': telegramUsername,
+      'items': items.map((item) => item.toJson()).toList(),
+      'totalPrice': items.fold(
+          0, (sum, item) => sum + item.product.price.toInt() * item.quantity),
+    };
+  }
 }
