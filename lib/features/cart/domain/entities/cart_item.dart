@@ -10,14 +10,4 @@ class CartItem {
     required this.quantity,
     this.selectedVolume,
   });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'productId': product.id,
-      'name': product.name,
-      'price': product.price,
-      'quantity': quantity,
-      'selectedVolume': selectedVolume,
-    };
-  }
 }

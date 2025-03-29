@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:per_shop/core/services/telegram_service.dart';
 import 'package:per_shop/core/widgets/custom_action_button_widget.dart';
 import 'package:per_shop/features/orders/presentation/blocs/order_bloc.dart';
-import 'package:telegram_web_app/telegram_web_app.dart';
 
 import '../../../../injection_container.dart';
 import '../../../cart/data/repositories/cart_repository_impl.dart';
@@ -149,12 +147,11 @@ class _OrderPageState extends State<OrderPage> {
                                   CustomActionButton(
                                     icon: Icons.payment,
                                     label: 'Перейти к оплате',
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        // Получаем объект пользователя из TelegramService (если он используется)
                                         final telegramUser =
                                             sl<TelegramService>().user;
-                                        // Формируем объект заказа
+
                                         final order = Order(
                                           id: generateOrderId(),
                                           clientName:
@@ -170,21 +167,12 @@ class _OrderPageState extends State<OrderPage> {
                                           telegramUsername:
                                               telegramUser.username,
                                         );
-
-                                        // Преобразуем заказ в Map
-                                        final orderData = order.toJson();
-                                        final jsonString =
-                                            jsonEncode(orderData);
-
-                                        // Отправляем данные заказа боту через sendData.
-                                        TelegramWebApp.instance
-                                            .sendData(jsonString);
-
-                                        // При этом мини-приложение автоматически закроется.
-                                        // Бот получит сообщение с полем web_app_data, содержащим orderData.
+                                        context.read<OrderBloc>().add(
+                                              PlaceOrderEvent(order: order),
+                                            );
                                       }
                                     },
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
