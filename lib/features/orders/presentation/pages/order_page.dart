@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:per_shop/core/services/telegram_service.dart';
 import 'package:per_shop/core/widgets/custom_action_button_widget.dart';
+import 'package:per_shop/core/widgets/custom_snack_bar_widget.dart';
 import 'package:per_shop/features/orders/presentation/blocs/order_bloc.dart';
 
 import '../../../../injection_container.dart';
@@ -51,7 +52,7 @@ class _OrderPageState extends State<OrderPage> {
             );
           } else if (state is OrderError) {
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
+                .showSnackBar(CustomSnackBar(message: state.message));
           }
         },
         child: Builder(
@@ -165,7 +166,7 @@ class _OrderPageState extends State<OrderPage> {
                                           telegramUserId:
                                               telegramUser.id.toString(),
                                           telegramUsername:
-                                              telegramUser.username,
+                                              telegramUser.username ?? '',
                                         );
                                         context.read<OrderBloc>().add(
                                               PlaceOrderEvent(order: order),

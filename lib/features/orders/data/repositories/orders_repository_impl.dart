@@ -31,8 +31,8 @@ class OrdersRepositoryImpl {
           };
         }).toList(),
         'createdAt': FieldValue.serverTimestamp(),
-        'telegramUserId': order.telegramUserId,
-        'telegramUsername': order.telegramUsername,
+        'telegramUserId': order.telegramUserId ?? '',
+        'telegramUsername': order.telegramUsername ?? '',
       };
 
       await firebaseService.firestore
