@@ -14,7 +14,7 @@ void main() async {
     Future.delayed(
         const Duration(milliseconds: 500),
         () => {
-              TelegramWebApp.instance.expand,
+              TelegramWebApp.instance.expand(),
               TelegramWebApp.instance.disableVerticalSwipes(),
             });
   }

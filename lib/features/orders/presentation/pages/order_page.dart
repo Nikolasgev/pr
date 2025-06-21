@@ -148,10 +148,10 @@ class _OrderPageState extends State<OrderPage> {
                                   CustomActionButton(
                                     icon: Icons.payment,
                                     label: 'Перейти к оплате',
-                                    onPressed: () async {
+                                    onPressed: () {
                                       if (_formKey.currentState!.validate()) {
-                                        final telegramUser =
-                                            sl<TelegramService>().user;
+                                        // final telegramUser =
+                                        //     sl<TelegramService>().user;
 
                                         final order = Order(
                                           id: generateOrderId(),
@@ -163,10 +163,10 @@ class _OrderPageState extends State<OrderPage> {
                                           comments: _commentsController.text,
                                           items: cart.items,
                                           status: 'Pending',
-                                          telegramUserId:
-                                              telegramUser.id.toString(),
-                                          telegramUsername:
-                                              telegramUser.username ?? '',
+                                          telegramUserId: '',
+                                              // telegramUser.id.toString(),
+                                          telegramUsername: '',
+                                              // telegramUser.username ?? '',
                                         );
                                         context.read<OrderBloc>().add(
                                               PlaceOrderEvent(order: order),

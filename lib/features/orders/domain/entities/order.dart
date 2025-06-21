@@ -9,8 +9,8 @@ class Order {
   final String comments;
   final List<CartItem> items;
   final String status;
-  final String? telegramUserId; // новое поле для Telegram ID
-  final String? telegramUsername; // новое поле для Telegram username
+  final String? telegramUserId;
+  final String? telegramUsername;
 
   Order({
     required this.id,
@@ -24,4 +24,36 @@ class Order {
     this.telegramUserId,
     this.telegramUsername,
   });
+
+  factory Order.fromJson(Map<String, dynamic> json) {
+    return Order(
+      id: json['id'] ?? '',
+      clientName: json['clientName'] ?? '',
+      address: json['address'] ?? '',
+      phone: json['phone'] ?? '',
+      email: json['email'] ?? '',
+      comments: json['comments'] ?? '',
+      status: json['status'] ?? '',
+      telegramUserId: json['telegramUserId'],
+      telegramUsername: json['telegramUsername'],
+      items: (json['items'] as List<dynamic>? ?? [])
+          .map((item) => CartItem.fromJson(item as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'clientName': clientName,
+      'address': address,
+      'phone': phone,
+      'email': email,
+      'comments': comments,
+      'status': status,
+      'telegramUserId': telegramUserId,
+      'telegramUsername': telegramUsername,
+      'items': items.map((item) => item.toJson()).toList(),
+    };
+  }
 }
