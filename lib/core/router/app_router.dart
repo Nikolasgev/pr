@@ -14,18 +14,24 @@ import '../../features/orders/presentation/pages/order_page.dart';
 
 class AppRouter {
   Route onGenerateRoute(RouteSettings settings) {
-    final uri = Uri.parse(settings.name ?? '/');
+    final raw = (settings.name == null || settings.name!.isEmpty)
+        ? '/'
+        : settings.name!;
+
+    debugPrint('Routing to: $raw');
+    final uri = Uri.tryParse(raw);
+    if (uri == null) {
+      // не смогли распарсить URI — просто на каталог
+      return MaterialPageRoute(builder: (_) => const CatalogPage());
+    }
 
     switch (uri.path) {
       case '/':
-        return MaterialPageRoute(builder: (_) => CatalogPage());
-
+        return MaterialPageRoute(builder: (_) => const CatalogPage());
       case '/cart':
         return MaterialPageRoute(builder: (_) => CartPage());
-
       case '/order':
         return MaterialPageRoute(builder: (_) => OrderPage());
-
       case '/admin':
         return MaterialPageRoute(builder: (_) => AdminOrdersPage());
 
@@ -44,9 +50,7 @@ class AppRouter {
         final product = settings.arguments as Product;
         return MaterialPageRoute(
             builder: (_) => ProductDetailPage(product: product));
-
       case '/payment-success':
-        // теперь uri.queryParameters уже отработает
         final orderId = uri.queryParameters['order_id'];
         if (orderId != null) {
           return MaterialPageRoute(
@@ -58,10 +62,8 @@ class AppRouter {
             body: Center(child: Text('Ошибка: отсутствует order_id')),
           ),
         );
-
       default:
-        return MaterialPageRoute(builder: (_) => CatalogPage());
+        return MaterialPageRoute(builder: (_) => const CatalogPage());
     }
   }
 }
-

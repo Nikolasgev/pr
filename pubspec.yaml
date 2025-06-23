@@ -21,6 +21,7 @@ dependencies:
   octopus: ^0.0.9
   http: ^1.4.0
   webview_flutter: ^4.13.0
+  url_strategy: ^0.3.0
 
 dev_dependencies:
   flutter_test:

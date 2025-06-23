@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_strategy/url_strategy.dart';
 import 'package:telegram_web_app/telegram_web_app.dart';
 
 import 'core/firebase/firebase_config.dart';
@@ -7,6 +8,7 @@ import 'injection_container.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  setPathUrlStrategy();
   await FirebaseConfig.initializeFirebase();
   setupInjection();
   if (TelegramWebApp.instance.isSupported) {
@@ -32,7 +34,6 @@ class MyApp extends StatelessWidget {
       title: 'Periche Telegram Shop',
       debugShowCheckedModeBanner: false,
       onGenerateRoute: _appRouter.onGenerateRoute,
-      initialRoute: '/',
     );
   }
 }
