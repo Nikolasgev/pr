@@ -61,7 +61,7 @@ class OrderPageState extends State<OrderPage> {
             return SafeArea(
               child: Scaffold(
                 appBar: AppBar(
-                  title: Text('Заказ'),
+                  title: Text('Заказ 01'),
                 ),
                 body: FutureBuilder<Cart>(
                   future: _fetchCart(),

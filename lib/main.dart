@@ -20,6 +20,9 @@ void main() async {
               TelegramWebApp.instance.disableVerticalSwipes(),
             });
   }
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+  };
   runApp(MyApp());
 }
 
