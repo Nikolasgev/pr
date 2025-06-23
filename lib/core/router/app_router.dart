@@ -14,16 +14,21 @@ import '../../features/orders/presentation/pages/order_page.dart';
 
 class AppRouter {
   Route onGenerateRoute(RouteSettings settings) {
-    // Маршруты приложения с использованием Octopus (для простоты – стандартный MaterialPageRoute)
-    switch (settings.name) {
+    final uri = Uri.parse(settings.name ?? '/');
+
+    switch (uri.path) {
       case '/':
         return MaterialPageRoute(builder: (_) => CatalogPage());
+
       case '/cart':
         return MaterialPageRoute(builder: (_) => CartPage());
+
       case '/order':
         return MaterialPageRoute(builder: (_) => OrderPage());
+
       case '/admin':
         return MaterialPageRoute(builder: (_) => AdminOrdersPage());
+
       case '/admin/orderDetail':
         final args = settings.arguments as Map<String, dynamic>;
         final order = args['order'] as Order;
@@ -34,26 +39,29 @@ class AppRouter {
             child: AdminOrderDetailPage(order: order),
           ),
         );
+
       case '/product':
         final product = settings.arguments as Product;
         return MaterialPageRoute(
             builder: (_) => ProductDetailPage(product: product));
+
       case '/payment-success':
-        final uri = Uri.parse(settings.name!);
+        // теперь uri.queryParameters уже отработает
         final orderId = uri.queryParameters['order_id'];
         if (orderId != null) {
           return MaterialPageRoute(
             builder: (_) => OrderSuccessPageFromId(orderId: orderId),
           );
-        } else {
-          return MaterialPageRoute(
-            builder: (_) => const Scaffold(
-              body: Center(child: Text('Ошибка: отсутствует order_id')),
-            ),
-          );
         }
+        return MaterialPageRoute(
+          builder: (_) => const Scaffold(
+            body: Center(child: Text('Ошибка: отсутствует order_id')),
+          ),
+        );
+
       default:
         return MaterialPageRoute(builder: (_) => CatalogPage());
     }
   }
 }
+

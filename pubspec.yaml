@@ -19,6 +19,8 @@ dependencies:
   telegram_web_app: ^0.3.3
   get_it: ^8.0.3
   octopus: ^0.0.9
+  http: ^1.4.0
+  webview_flutter: ^4.13.0
 
 dev_dependencies:
   flutter_test:

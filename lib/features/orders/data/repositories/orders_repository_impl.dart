@@ -11,7 +11,7 @@ class OrdersRepositoryImpl {
   Future<void> placeOrder(Order order) async {
     try {
       // Преобразуем заказ в Map для сохранения в Firestore.
-      final orderData = {
+      final Map<String, Object> orderData = {
         'clientName': order.clientName,
         'address': order.address,
         'phone': order.phone,
@@ -33,6 +33,7 @@ class OrdersRepositoryImpl {
         'createdAt': FieldValue.serverTimestamp(),
         'telegramUserId': order.telegramUserId ?? '',
         'telegramUsername': order.telegramUsername ?? '',
+        'price': order.price
       };
 
       await firebaseService.firestore
@@ -74,7 +75,8 @@ class OrdersRepositoryImpl {
           items: items,
           status: data['status'],
           telegramUserId: data['telegramUserId'],
-          telegramUsername: data['telegramUsername'],
+          telegramUsername: data['telegramUsername'], 
+          price: data['price'],
         );
       }).toList();
     } catch (e) {

@@ -1,11 +1,13 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:per_shop/core/services/telegram_service.dart';
 import 'package:per_shop/core/widgets/custom_action_button_widget.dart';
 import 'package:per_shop/core/widgets/custom_snack_bar_widget.dart';
 import 'package:per_shop/features/orders/presentation/blocs/order_bloc.dart';
+import 'package:per_shop/features/orders/presentation/pages/start_payment.dart';
 
 import '../../../../injection_container.dart';
 import '../../../cart/data/repositories/cart_repository_impl.dart';
@@ -16,10 +18,10 @@ class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
 
   @override
-  _OrderPageState createState() => _OrderPageState();
+  OrderPageState createState() => OrderPageState();
 }
 
-class _OrderPageState extends State<OrderPage> {
+class OrderPageState extends State<OrderPage> {
   final _formKey = GlobalKey<FormState>();
   final _clientNameController = TextEditingController();
   final _addressController = TextEditingController();
@@ -45,14 +47,13 @@ class _OrderPageState extends State<OrderPage> {
       child: BlocListener<OrderBloc, OrderState>(
         listener: (context, state) {
           if (state is OrderPlaced) {
-            Navigator.pushReplacementNamed(
-              context,
-              "/orderSuccessPage",
-              arguments: state.order,
-            );
-          } else if (state is OrderError) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(CustomSnackBar(message: state.message));
+            if (state.order.id.isNotEmpty) {
+              startPayment(context, state.order.id);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                CustomSnackBar(message: 'Ошибка: пустой ID заказа'),
+              );
+            }
           }
         },
         child: Builder(
@@ -148,11 +149,8 @@ class _OrderPageState extends State<OrderPage> {
                                   CustomActionButton(
                                     icon: Icons.payment,
                                     label: 'Перейти к оплате',
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        // final telegramUser =
-                                        //     sl<TelegramService>().user;
-
                                         final order = Order(
                                           id: generateOrderId(),
                                           clientName:
@@ -164,10 +162,15 @@ class _OrderPageState extends State<OrderPage> {
                                           items: cart.items,
                                           status: 'Pending',
                                           telegramUserId: '',
-                                              // telegramUser.id.toString(),
-                                          telegramUsername: '',
-                                              // telegramUser.username ?? '',
+                                          telegramUsername: '', 
+                                          price: cart.totalPrice,
                                         );
+
+                                        await FirebaseFirestore.instance
+                                            .collection('orders')
+                                            .doc(order.id)
+                                            .set(order.toJson());
+
                                         context.read<OrderBloc>().add(
                                               PlaceOrderEvent(order: order),
                                             );

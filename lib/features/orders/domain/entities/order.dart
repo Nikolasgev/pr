@@ -11,6 +11,7 @@ class Order {
   final String status;
   final String? telegramUserId;
   final String? telegramUsername;
+  final double price;
 
   Order({
     required this.id,
@@ -23,6 +24,7 @@ class Order {
     required this.status,
     this.telegramUserId,
     this.telegramUsername,
+    required this.price,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class Order {
       email: json['email'] ?? '',
       comments: json['comments'] ?? '',
       status: json['status'] ?? '',
+      price: (json['price'] ?? 0).toDouble(), // ← добавь
       telegramUserId: json['telegramUserId'],
       telegramUsername: json['telegramUsername'],
       items: (json['items'] as List<dynamic>? ?? [])
@@ -51,6 +54,7 @@ class Order {
       'email': email,
       'comments': comments,
       'status': status,
+      'price': price, // ← добавь
       'telegramUserId': telegramUserId,
       'telegramUsername': telegramUsername,
       'items': items.map((item) => item.toJson()).toList(),
