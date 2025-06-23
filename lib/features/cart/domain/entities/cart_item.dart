@@ -12,10 +12,12 @@ class CartItem {
   });
 
   factory CartItem.fromJson(Map<String, dynamic> json) {
+    final productJson = json['product'] as Map<String, dynamic>? ?? json;
+
     return CartItem(
-      product: Product.fromJson(json['product']),
-      quantity: json['quantity'] ?? 0,
-      selectedVolume: json['selectedVolume'],
+      product: Product.fromJson(productJson),
+      quantity: json['quantity'] as int? ?? 0,
+      selectedVolume: json['selectedVolume'] as String?,
     );
   }
 
