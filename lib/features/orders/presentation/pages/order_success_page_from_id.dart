@@ -11,23 +11,22 @@ class OrderSuccessPageFromId extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return FutureBuilder<DocumentSnapshot>(
       future:
           FirebaseFirestore.instance.collection('orders').doc(orderId).get(),
       builder: (context, snapshot) {
-        // 1) ждем данных
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        // 2) нет документа
         if (!snapshot.hasData || !snapshot.data!.exists) {
           return const Scaffold(
             body: Center(child: Text('Заказ не найден')),
           );
         }
-        // 3) документ есть — разобрали его явно, id берем из snapshot.id
+
         final raw = snapshot.data!.data()! as Map<String, dynamic>;
         final loadedOrder = order.Order(
           id: snapshot.data!.id,
@@ -40,44 +39,104 @@ class OrderSuccessPageFromId extends StatelessWidget {
           telegramUserId: raw['telegramUserId'] as String?,
           telegramUsername: raw['telegramUsername'] as String?,
           price: (raw['price'] ?? 0).toDouble(),
-          items: (raw['items'] as List<dynamic>? ?? [])
-              .map((item) {
-                final m = item as Map<String, dynamic>;
-                // CartItem.fromJson из вашего домена
-                return CartItem.fromJson(m);
-              })
-              .toList(),
+          items: (raw['items'] as List<dynamic>? ?? []).map((item) {
+            final m = item as Map<String, dynamic>;
+            return CartItem.fromJson(m);
+          }).toList(),
         );
 
-        // 4) строим экран успеха
         return Scaffold(
-          appBar: AppBar(title: Text('Заказ №${loadedOrder.id}')),
-          body: Center(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.check_circle_outline,
-                      size: 80, color: Colors.green),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Спасибо, ${loadedOrder.clientName}!\n'
-                    'Ваш заказ №${loadedOrder.id} на сумму '
-                    '${loadedOrder.price.toStringAsFixed(2)}₽ успешно оформлен.',
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/', (route) => false);
+          appBar: AppBar(
+            title: Text('Спасибо, ${loadedOrder.clientName}!'),
+            centerTitle: true,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Icon(
+                  Icons.check_circle_outline,
+                  size: 80,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Ваш заказ №${loadedOrder.id} оформлен',
+                  style: theme.textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Сумма к оплате: ${loadedOrder.price.toStringAsFixed(2)}₽',
+                  style: theme.textTheme.titleMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: loadedOrder.items.length,
+                    separatorBuilder: (_, __) => const Divider(),
+                    itemBuilder: (_, idx) {
+                      final item = loadedOrder.items[idx];
+                      final volumeText = item.selectedVolume ??
+                          item.product.volume?.first ??
+                          '';
+                      return ListTile(
+                        contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            item.product.imageUrl,
+                            width: 48,
+                            height: 48,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        title: Row(
+                          children: [
+                            Text(
+                              '${item.product.name} ($volumeText мл)',
+                              style: theme.textTheme.bodyLarge,
+                            ),
+
+                          ],
+                        ),
+                        subtitle: Text('× ${item.quantity}'),
+                        trailing: Text(
+                          '${(item.product.price * item.quantity).toStringAsFixed(2)}₽',
+                          style: theme.textTheme.titleMedium!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      );
                     },
-                    child: const Text('Вернуться к покупкам'),
                   ),
-                ],
-              ),
+                ),
+                const Divider(height: 32),
+                Text(
+                  'Итого: ${loadedOrder.price.toStringAsFixed(2)}₽',
+                  style: theme.textTheme.titleLarge!
+                      .copyWith(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.right,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/', (route) => false);
+                  },
+                  child: const Text(
+                    'Вернуться к покупкам',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
             ),
           ),
         );
