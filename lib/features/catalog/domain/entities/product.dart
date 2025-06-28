@@ -2,42 +2,44 @@ class Product {
   final String id;
   final String name;
   final String description;
-  final double price;
   final String imageUrl;
   final String category;
-  final List<String>? volume;
 
-  Product({
+  /// карта «объём → цена»
+  final Map<String, double> prices;
+
+  /// получаем список объёмов прямо из карты
+  List<String> get volumes => prices.keys.toList();
+
+  const Product({
     required this.id,
     required this.name,
     required this.description,
-    required this.price,
     required this.imageUrl,
     required this.category,
-    this.volume,
+    required this.prices,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      price: (json['price'] ?? 0).toDouble(),
-      imageUrl: json['imageUrl'] ?? '',
-      category: json['category'] ?? '',
-      volume: json['volume'] != null ? List<String>.from(json['volume']) : null,
-    );
-  }
+  double priceFor(String vol) => prices[vol] ?? 0;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'price': price,
-      'imageUrl': imageUrl,
-      'category': category,
-      'volume': volume,
-    };
-  }
+  // ---------- JSON ----------
+  factory Product.fromJson(Map<String, dynamic> json) => Product(
+        id         : json['id'],
+        name       : json['name'],
+        description: json['description'],
+        imageUrl   : json['imageUrl'],
+        category   : json['category'],
+        prices     : (json['prices'] as Map).map(
+          (k, v) => MapEntry(k as String, (v as num).toDouble()),
+        ),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id'        : id,
+        'name'      : name,
+        'description': description,
+        'imageUrl'  : imageUrl,
+        'category'  : category,
+        'prices'    : prices,
+      };
 }
