@@ -11,21 +11,20 @@ class CartItem {
     this.selectedVolume,
   });
 
-  factory CartItem.fromJson(Map<String, dynamic> json) {
-    final productJson = json['product'] as Map<String, dynamic>? ?? json;
+  double get unitPrice =>
+      product.priceFor(selectedVolume ?? product.volumes.first);
 
-    return CartItem(
-      product: Product.fromJson(productJson),
-      quantity: json['quantity'] as int? ?? 0,
-      selectedVolume: json['selectedVolume'] as String?,
-    );
-  }
+  double get totalPrice => unitPrice * quantity;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'product': product.toJson(),
-      'quantity': quantity,
-      'selectedVolume': selectedVolume,
-    };
-  }
+  factory CartItem.fromJson(Map<String, dynamic> json) => CartItem(
+        product: Product.fromJson(json['product']),
+        quantity: json['quantity'] as int? ?? 0,
+        selectedVolume: json['selectedVolume'] as String?,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'product': product.toJson(),
+        'quantity': quantity,
+        'selectedVolume': selectedVolume,
+      };
 }

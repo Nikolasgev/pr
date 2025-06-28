@@ -104,7 +104,7 @@ class _AdminOrderDetailPageState extends State<AdminOrderDetailPage> {
                           ],
                         ),
                         trailing: Text(
-                          '${(item.product.price * item.quantity).toStringAsFixed(2)}₽',
+                          '${item.totalPrice.toStringAsFixed(2)}₽',
                         ),
                       ),
                     );

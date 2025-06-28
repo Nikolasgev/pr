@@ -23,7 +23,7 @@ class OrdersRepositoryImpl {
             'id': item.product.id,
             'name': item.product.name,
             'description': item.product.description,
-            'price': item.product.price,
+            'price': item.unitPrice,
             'quantity': item.quantity,
             'imageUrl': item.product.imageUrl,
             'category': item.product.category,
@@ -57,7 +57,10 @@ class OrdersRepositoryImpl {
               id: item['id'],
               name: item['name'],
               description: item['description'],
-              price: (item['price'] as num).toDouble(),
+              prices: {
+                (item['selectedVolume'] as String?) ?? '—':
+                    (item['unitPrice'] ?? item['price']) as double
+              },
               imageUrl: item['imageUrl'],
               category: item['category'],
             ),
@@ -75,7 +78,7 @@ class OrdersRepositoryImpl {
           items: items,
           status: data['status'],
           telegramUserId: data['telegramUserId'],
-          telegramUsername: data['telegramUsername'], 
+          telegramUsername: data['telegramUsername'],
           price: data['price'],
         );
       }).toList();

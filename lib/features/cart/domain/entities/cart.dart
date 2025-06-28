@@ -5,6 +5,5 @@ class Cart {
 
   Cart({required this.items});
 
-  double get totalPrice =>
-      items.fold(0, (sum, item) => sum + item.product.price * item.quantity);
+  double get totalPrice => items.fold(0, (sum, item) => sum + item.totalPrice);
 }

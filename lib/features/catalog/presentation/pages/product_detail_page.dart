@@ -21,8 +21,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   void initState() {
     super.initState();
     // Если есть список объёмов, выбираем первый по умолчанию
-    if (widget.product.volume != null && widget.product.volume!.isNotEmpty) {
-      selectedVolume = widget.product.volume!.first;
+    if (widget.product.volumes.isNotEmpty) {
+      selectedVolume = widget.product.volumes.first;
     }
   }
 
@@ -62,12 +62,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             Text(widget.product.description),
                             const SizedBox(height: 8),
                             Text(
-                              '${widget.product.price.toString()}₽',
+                              '${widget.product.priceFor(selectedVolume ?? widget.product.volumes.first).toString()}₽',
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             // Если товар имеет варианты объёма, показываем селектор
-                            if (widget.product.volume != null &&
-                                widget.product.volume!.isNotEmpty)
+                            if (widget.product.volumes.isNotEmpty)
                               Padding(
                                 padding: const EdgeInsets.only(top: 16),
                                 child: Row(
@@ -75,12 +74,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                     const Text("Объем: "),
                                     DropdownButton<String>(
                                       value: selectedVolume,
-                                      items: widget.product.volume!
-                                          .map((volume) =>
-                                              DropdownMenuItem<String>(
-                                                value: volume,
-                                                child: Text(volume),
-                                              ))
+                                      items: widget.product.volumes
+                                          .map(
+                                              (vol) => DropdownMenuItem<String>(
+                                                    value: vol,
+                                                    child: Text(vol),
+                                                  ))
                                           .toList(),
                                       onChanged: (newVolume) {
                                         setState(() {
@@ -118,12 +117,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       Text(widget.product.description),
                       const SizedBox(height: 8),
                       Text(
-                        '${widget.product.price.toString()}₽',
+                        '${widget.product.priceFor(selectedVolume ?? widget.product.volumes.first).toString()}₽',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       // Если есть варианты объёма, добавляем селектор
-                      if (widget.product.volume != null &&
-                          widget.product.volume!.isNotEmpty)
+                      if (widget.product.volumes.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(top: 16),
                           child: Row(
@@ -131,10 +129,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               const Text("Объем: "),
                               DropdownButton<String>(
                                 value: selectedVolume,
-                                items: widget.product.volume!
-                                    .map((volume) => DropdownMenuItem<String>(
-                                          value: volume,
-                                          child: Text(volume),
+                                items: widget.product.volumes
+                                    .map((vol) => DropdownMenuItem<String>(
+                                          value: vol,
+                                          child: Text(vol),
                                         ))
                                     .toList(),
                                 onChanged: (newVolume) {

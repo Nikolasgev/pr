@@ -89,9 +89,9 @@ class OrderPageState extends State<OrderPage> {
                                 return ListTile(
                                   title: Text(item.product.name),
                                   subtitle: Text(
-                                      'Цена: ${item.product.price.toStringAsFixed(2)}₽  x  ${item.quantity}'),
+                                      'Цена: ${item.unitPrice.toStringAsFixed(2)}₽  x  ${item.quantity}'),
                                   trailing: Text(
-                                      '${(item.product.price * item.quantity).toStringAsFixed(2)}₽'),
+                                      '${(item.totalPrice).toStringAsFixed(2)}₽'),
                                 );
                               },
                             ),

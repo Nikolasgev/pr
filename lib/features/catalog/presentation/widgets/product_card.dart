@@ -58,13 +58,11 @@ class ProductCard extends StatelessWidget {
 
   /// Обработчик добавления в корзину с учетом выбора объёма.
   void _handleAddToCart(BuildContext context) async {
-    if (product.volume != null &&
-        product.volume!.isNotEmpty &&
-        product.volume!.length > 1) {
+    if (product.volumes.length > 1) {
       final selectedVolume = await showVolumeSelectorDialog(
         context,
-        product.volume!,
-        initialValue: product.volume!.first,
+        product.volumes,
+        initialValue: product.volumes.first,
       );
       if (selectedVolume != null) {
         sl<CartBloc>().add(AddProductToCart(
@@ -75,7 +73,10 @@ class ProductCard extends StatelessWidget {
             message: '${product.name} ($selectedVolume) добавлен в корзину'));
       }
     } else {
-      sl<CartBloc>().add(AddProductToCart(product: product));
+      sl<CartBloc>().add(AddProductToCart(
+        product: product,
+        selectedVolume: product.volumes.first,
+      ));
       ScaffoldMessenger.of(context).showSnackBar(
           CustomSnackBar(message: '${product.name} добавлен в корзину'));
     }
@@ -150,12 +151,12 @@ class ProductCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            '${product.price}',
+                            '${product.priceFor(product.volumes.last).round()}',
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w600),
                           ),
                           const Text(
-                            '₽',
+                            ' ₽',
                             style: TextStyle(
                                 fontSize: 12, fontWeight: FontWeight.w700),
                           ),

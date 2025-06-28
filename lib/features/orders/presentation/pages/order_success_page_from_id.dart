@@ -79,9 +79,8 @@ class OrderSuccessPageFromId extends StatelessWidget {
                     separatorBuilder: (_, __) => const Divider(),
                     itemBuilder: (_, idx) {
                       final item = loadedOrder.items[idx];
-                      final volumeText = item.selectedVolume ??
-                          item.product.volume?.first ??
-                          '';
+                      final volumeText =
+                          item.selectedVolume ?? item.product.volumes.first;
                       return ListTile(
                         contentPadding: const EdgeInsets.symmetric(vertical: 4),
                         leading: ClipRRect(
@@ -99,12 +98,11 @@ class OrderSuccessPageFromId extends StatelessWidget {
                               '${item.product.name} ($volumeText мл)',
                               style: theme.textTheme.bodyLarge,
                             ),
-
                           ],
                         ),
                         subtitle: Text('× ${item.quantity}'),
                         trailing: Text(
-                          '${(item.product.price * item.quantity).toStringAsFixed(2)}₽',
+                          '${item.totalPrice.toStringAsFixed(2)}₽',
                           style: theme.textTheme.titleMedium!
                               .copyWith(fontWeight: FontWeight.bold),
                         ),
